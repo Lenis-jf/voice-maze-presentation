@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maze Project Präsentation</title>
+    <title>Voice Controlled Maze - Präsentation</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap"
         rel="stylesheet">
@@ -48,6 +48,7 @@
             position: relative;
         }
 
+        /* --- SLIDES --- */
         .slide {
             position: absolute;
             top: 0;
@@ -65,6 +66,7 @@
                 inset 0 0 20px rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(16px) saturate(120%);
             border: 1px solid var(--glass-border);
+            /* Estado oculto por defecto */
             opacity: 0;
             visibility: hidden;
             transform: translateY(40px) scale(0.96) rotateX(4deg);
@@ -81,6 +83,7 @@
             transition-delay: 0.1s;
         }
 
+        /* --- CONTENT & PANELS --- */
         .content-panel {
             display: flex;
             flex-direction: column;
@@ -109,6 +112,7 @@
             font-weight: 600;
         }
 
+        /* Code Panel Styles */
         .code-panel {
             background: #121212;
             border-radius: 16px;
@@ -162,6 +166,40 @@
             line-height: 1.5 !important;
         }
 
+        /* QR Panel Styles */
+        .qr-panel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .qr-img {
+            border-radius: 12px;
+            border: 8px solid white;
+            /* Borde blanco para facilitar escaneo */
+            width: 280px;
+            height: 280px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .qr-img:hover {
+            transform: scale(1.05);
+        }
+
+        .qr-caption {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -180,6 +218,7 @@
             background: var(--accent);
         }
 
+        /* --- CONTROLS --- */
         .controls {
             position: absolute;
             bottom: 30px;
@@ -225,9 +264,7 @@
             background: var(--accent);
             color: var(--bg-color);
             transform: translateY(-4px) scale(1.05);
-            box-shadow:
-                0 15px 30px -5px rgba(0, 225, 255, 0.5),
-                0 0 15px var(--accent);
+            box-shadow: 0 15px 30px -5px rgba(0, 225, 255, 0.5), 0 0 15px var(--accent);
         }
 
         button:hover::after {
@@ -239,7 +276,7 @@
             box-shadow: 0 5px 15px -5px rgba(0, 225, 255, 0.5);
         }
 
-        /* --- CONTADOR CON ANIMACIÓN CSS (SOLUCIÓN DEFINITIVA) --- */
+        /* --- SLIDE COUNTER --- */
         .slide-counter {
             position: absolute;
             bottom: 45px;
@@ -249,50 +286,23 @@
             color: var(--accent);
             font-size: 1rem;
             letter-spacing: 1px;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
             padding: 8px 16px;
             border-radius: 20px;
             border: 1px solid rgba(0, 225, 255, 0.2);
-
-            /* Estado base: Oculto */
             opacity: 0;
             transform: translateY(10px);
             pointer-events: none;
+            transition: opacity 0.2s ease-in, transform 0.2s ease-in;
         }
 
-        /* Esta clase dispara la animación cuando JS la añade */
-        .slide-counter.run-animation {
-            animation: fadeCycle 3.5s ease forwards;
+        .slide-counter.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
 
-        /* Definimos el ciclo exacto de vida del contador */
-        @keyframes fadeCycle {
-            0% {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            10% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            /* Aparece rápido */
-            85% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            /* Se queda quieto hasta el 85% del tiempo */
-            100% {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            /* Desaparece al final */
-        }
-
-        /* --- RESPONSIVE FIX (Para Celulares) --- */
+        /* --- RESPONSIVE FIX (Mobile) --- */
         @media (max-width: 900px) {
             .slide {
                 grid-template-columns: 1fr;
@@ -306,9 +316,15 @@
                 font-size: 1.8rem;
             }
 
-            .code-panel {
-                min-height: 400px;
+            .code-panel,
+            .qr-panel {
+                min-height: 350px;
                 margin-bottom: 80px;
+            }
+
+            .qr-img {
+                width: 200px;
+                height: 200px;
             }
 
             .controls {
@@ -337,12 +353,26 @@
 
         <div class="slide active">
             <div class="content-panel">
-                <h1>1. BFS-Algorithmus zum Finden des Ausgangs</h1>
+                <h1>Voice Controlled Maze</h1>
+                <p><strong>Technische Präsentation</strong></p>
+                <p>Willkommen. Dies ist eine exemplarische Darstellung der entscheidenden Codeblöcke des Projekts.</p>
+                <p style="color: var(--accent);">Scannen Sie den QR-Code, um diese Präsentation auf Ihrem Smartphone zu
+                    visualisieren.</p>
+            </div>
+            <div class="qr-panel">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://lenis-jf.github.io/voice-maze-presentation/"
+                    class="qr-img" alt="Präsentation QR Code">
+                <span class="qr-caption">Scan to view Slides</span>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-panel">
+                <h1>2. BFS-Algorithmus zum Finden des Ausgangs</h1>
                 <p><strong>Strategie "Farthest Cell":</strong> Implementierung einer Breitensuche (BFS), um das gesamte
                     Labyrinth vom Startpunkt aus zu durchqueren.</p>
                 <p>Wir berechnen die Distanz zu jeder Zelle und wählen die am weitesten entfernte als "Ausgang" (Exit).
-                    Dies garantiert, dass sich das Ziel immer an einer für den Spieler herausfordernden Position
-                    befindet.</p>
+                </p>
             </div>
             <div class="code-panel">
                 <div class="code-header">
@@ -354,7 +384,6 @@
 // src/components/Maze.jsx
 
 function bfs(startCell, cells) {
-  // Distanzen zurücksetzen
   for (let cell of cells) {
     cell.distanceToStart = Infinity;
     cell.isExit = false;
@@ -366,7 +395,6 @@ function bfs(startCell, cells) {
   while (queue.length > 0) {
     const currentCell = queue.shift();
     // findNeighborsBFS gibt erreichbare Nachbarn zurück 
-    // (ohne Wände dazwischen)
     for (let neighbor of findNeighborsBFS(currentCell, cells)) {
       if (!localVisited.has(neighbor)) {
         localVisited.add(neighbor);
@@ -376,26 +404,13 @@ function bfs(startCell, cells) {
     }
   }
 }
-
-function findLongestPath(cells) {
-  let maxDistance = -1;
-  let exitCell = null;
-  for (let cell of cells) {
-    if (cell.distanceToStart !== Infinity && 
-        cell.distanceToStart > maxDistance) {
-      maxDistance = cell.distanceToStart;
-      exitCell = cell;
-    }
-  }
-  return exitCell;
-}
                 </code></pre>
             </div>
         </div>
 
         <div class="slide">
             <div class="content-panel">
-                <h1>2. Backtracking-Algorithmus (Generierung)</h1>
+                <h1>3. Backtracking-Algorithmus (Generierung)</h1>
                 <p><strong>Das Herzstück der Labyrinth-Erstellung.</strong></p>
                 <p>Es wird eine iterative Backtracking-Technik mit einem Stack verwendet. Der Algorithmus besucht eine
                     Zelle, durchbricht Wände zu zufälligen Nachbarn und rückt vor. Wenn er keine Optionen mehr hat, geht
@@ -435,11 +450,10 @@ if (localCurrent) {
 
         <div class="slide">
             <div class="content-panel">
-                <h1>3. Spielerlogik (Klasse Player)</h1>
+                <h1>4. Spielerlogik (Klasse Player)</h1>
                 <p>Die Klasse <code>Player</code> kapselt die Physik und die interpolierte Bewegung.</p>
                 <p>Hervorzuheben ist die Methode <code>update</code>, die eine Easing-Funktion
-                    (<strong>easeOutSine</strong>) verwendet, um die Bewegung zwischen den Zellen zu glätten, sowie eine
-                    "Bounce"-Logik für visuelles Feedback bei Kollisionen mit Wänden.</p>
+                    (<strong>easeOutSine</strong>) verwendet, um die Bewegung zwischen den Zellen zu glätten.</p>
             </div>
             <div class="code-panel">
                 <div class="code-header">
@@ -454,7 +468,6 @@ export default class Player {
   constructor(startCell, cellSize, options = {}) {
     this.cellSize = cellSize;
     this.setPositionFromCell(startCell);
-    // ... Initialisierung von Zustandsvariablen
   }
 
   // update wird in jedem Frame der Spielschleife aufgerufen
@@ -471,12 +484,10 @@ export default class Player {
       this.progress = t;
     }
 
-    // Unabhängige Logik für den Abpralleffekt an Wänden
     if (this.bouncing) {
       // ... Berechnungen zur Simulation des visuellen Aufpralls
     }
   }
-  // ... Methoden moveTo, draw, usw.
 }
                 </code></pre>
             </div>
@@ -484,7 +495,7 @@ export default class Player {
 
         <div class="slide">
             <div class="content-panel">
-                <h1>4. Klasse Zelle (Cell)</h1>
+                <h1>5. Klasse Zelle (Cell)</h1>
                 <p>Die fundamentale Einheit des Rasters.</p>
                 <p>Sie verwaltet ihre Position, ihren Zustand (besucht, Start, Ende) und ihre <strong>4 Wände</strong>.
                     Sie enthält die Logik <code>checkNeighbors</code> für die zufällige Generierung und ihre eigene
@@ -530,11 +541,10 @@ function Cell(i, j, size, cols, rows) {
 
         <div class="slide">
             <div class="content-panel">
-                <h1>5. Optimierung (Offscreen Canvas)</h1>
+                <h1>6. Optimierung (Offscreen Canvas)</h1>
                 <p>Zur Vermeidung von Leistungsproblemen (niedrige FPS).</p>
                 <p>Implementierung von <strong>Double Buffer</strong>. Das statische Labyrinth wird nur EINMAL in den
-                    Speicher gezeichnet. In jedem Frame "kopieren" wir dieses Bild und zeichnen den Spieler darüber,
-                    wodurch die Neuberechnung tausender Wände pro Sekunde vermieden wird.</p>
+                    Speicher gezeichnet. In jedem Frame "kopieren" wir dieses Bild und zeichnen den Spieler darüber.</p>
             </div>
             <div class="code-panel">
                 <div class="code-header">
@@ -556,8 +566,6 @@ const drawMazeToOffscreen = useCallback((cols, rows, cellsArray) => {
 
 const redrawAll = useCallback(() => {
   const ctx = ctxRef.current; // Sichtbares Canvas
-  
-  // Löschen
   ctx.clearRect(0, 0, width, height);
   
   // Kopieren des statischen Labyrinthbildes sofort
@@ -571,7 +579,7 @@ const redrawAll = useCallback(() => {
 
         <div class="slide">
             <div class="content-panel">
-                <h1>6. Sprachsteuerung (WebSpeech API)</h1>
+                <h1>7. Sprachsteuerung (WebSpeech API)</h1>
                 <p>Native Browser-Integration für Barrierefreiheit und modernes Gameplay.</p>
                 <p>Wir konfigurieren die kontinuierliche Erkennung und erfassen das <code>transcript</code> in Echtzeit,
                     um es an den Befehlsprozessor zu senden.</p>
@@ -603,11 +611,10 @@ recognition.onresult = (event) => {
 
         <div class="slide">
             <div class="content-panel">
-                <h1>7. Interpretation mit Regex</h1>
+                <h1>8. Interpretation mit Regex</h1>
                 <p>Analyse natürlicher Sprache für komplexe Befehle.</p>
                 <p>Wir verwenden <strong>Reguläre Ausdrücke</strong>, um Mengen ("zwei", "3") und Richtungen zu
-                    extrahieren. Dies ermöglicht es dem Benutzer, "Dreimal hoch" zu sagen, und das System führt die
-                    Aktion <code>UP</code> dreimal hintereinander aus.</p>
+                    extrahieren. Dies ermöglicht es dem Benutzer, "Dreimal hoch" zu sagen.</p>
             </div>
             <div class="code-panel">
                 <div class="code-header">
@@ -641,7 +648,21 @@ export function interpretSequence(transcript = "") {
             </div>
         </div>
 
-        <div class="slide-counter">Folie <span id="current">1</span> / 7</div>
+        <div class="slide">
+            <div class="content-panel">
+                <h1>Vielen Dank!</h1>
+                <p>Das Projekt ist live und spielbar.</p>
+                <p>Testen Sie Ihre Fähigkeiten und die Sprachsteuerung direkt im Browser.</p>
+                <p style="color: var(--accent);"><strong>Scannen Sie den QR-Code, um zum Spiel zu gelangen.</strong></p>
+            </div>
+            <div class="qr-panel">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://lenis-jf.github.io/voice-controlled-maze/"
+                    class="qr-img" alt="Maze Game QR Code">
+                <span class="qr-caption">Scan to Play</span>
+            </div>
+        </div>
+
+        <div class="slide-counter">Folie <span id="current">1</span> / <span id="total">9</span></div>
 
         <div class="controls">
             <button onclick="prevSlide()">← Zurück</button>
@@ -652,29 +673,37 @@ export function interpretSequence(transcript = "") {
     <script>
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
-        const counter = document.getElementById('current');
+        const counterCurrent = document.getElementById('current');
+        const counterTotal = document.getElementById('total');
         const counterEl = document.querySelector('.slide-counter');
 
-        // Función corregida: Usamos el ciclo de animación CSS en lugar de JS Timers
+        // Inicializar contador total automáticamente
+        counterTotal.innerText = slides.length;
+
+        // Variable para guardar el temporizador
+        let hideTimer;
+
         function showCounter() {
-            // 1. Quitamos la clase de animación (para resetear si ya estaba corriendo)
-            counterEl.classList.remove('run-animation');
+            // 1. Mostrar inmediatamente añadiendo la clase
+            counterEl.classList.add('visible');
 
-            // 2. Truco mágico (Reflow): Forzamos al navegador a "darse cuenta" de que quitamos la clase.
-            // Sin esto, el navegador optimiza y no reinicia la animación si sucede muy rápido.
-            void counterEl.offsetWidth;
+            // 2. Limpiar cualquier temporizador anterior (para que no se oculte si diste click rápido)
+            if (hideTimer) clearTimeout(hideTimer);
 
-            // 3. Volvemos a añadir la clase para que la animación empiece de 0
-            counterEl.classList.add('run-animation');
+            // 3. Crear un nuevo temporizador de 3 segundos
+            hideTimer = setTimeout(() => {
+                // Pasados 3 segundos, quitamos la clase y el CSS se encarga del Fade Out
+                counterEl.classList.remove('visible');
+            }, 3000);
         }
 
         function showSlide(index) {
             slides.forEach((slide, i) => {
                 slide.classList.toggle('active', i === index);
             });
-            counter.innerText = index + 1;
+            counterCurrent.innerText = index + 1;
 
-            // Trigger del contador
+            // Disparar la lógica del contador
             showCounter();
         }
 
@@ -692,13 +721,12 @@ export function interpretSequence(transcript = "") {
             }
         }
 
-        // Navegación por teclado
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
             if (e.key === 'ArrowLeft') prevSlide();
         });
 
-        // Mostrar contador al cargar la página por primera vez
+        // Mostrar al cargar por primera vez
         showCounter();
 
     </script>
