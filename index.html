@@ -4,16 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Controlled Maze - Präsentation</title>
+    <title>Voice Controlled Maze - HMI Präsentation</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
         rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
         :root {
             --bg-color: #0a0f1d;
             --accent: #00e1ff;
+            --accent-hover: #00b8d4;
             --text: #e2e8f0;
             --text-muted: #94a3b8;
             --glass-bg: rgba(20, 25, 40, 0.75);
@@ -42,9 +44,9 @@
         }
 
         .presentation-container {
-            width: 92%;
-            max-width: 1400px;
-            height: 88vh;
+            width: 95%;
+            max-width: 1600px;
+            height: 90vh;
             position: relative;
         }
 
@@ -56,8 +58,8 @@
             width: 100%;
             height: 100%;
             display: grid;
-            grid-template-columns: 1fr 1.4fr;
-            gap: 3rem;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
             padding: 2.5rem;
             background: var(--glass-bg);
             border-radius: 24px;
@@ -66,7 +68,8 @@
                 inset 0 0 20px rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(16px) saturate(120%);
             border: 1px solid var(--glass-border);
-            /* Estado oculto por defecto */
+
+            /* Animaciones */
             opacity: 0;
             visibility: hidden;
             transform: translateY(40px) scale(0.96) rotateX(4deg);
@@ -83,28 +86,56 @@
             transition-delay: 0.1s;
         }
 
-        /* --- CONTENT & PANELS --- */
+        .slide.full-content {
+            grid-template-columns: 1fr;
+            text-align: center;
+            align-content: center;
+        }
+
+        .slide.split-content {
+            grid-template-columns: 1fr 1fr;
+            text-align: left;
+        }
+
+        /* --- TEXT CONTENT --- */
         .content-panel {
             display: flex;
             flex-direction: column;
             justify-content: center;
+            overflow-y: auto;
+            padding-right: 10px;
+            /* Evita que el scroll tape texto */
         }
 
         h1 {
-            font-size: 2.4rem;
+            font-size: 2.2rem;
             font-weight: 700;
             color: var(--accent);
             margin-bottom: 1.5rem;
             line-height: 1.1;
-            letter-spacing: -0.5px;
-            text-shadow: 0 0 15px rgba(0, 225, 255, 0.4);
+            text-shadow: 0 0 20px rgba(0, 225, 255, 0.3);
         }
 
-        p {
-            font-size: 1.1rem;
-            line-height: 1.7;
+        h2 {
+            font-size: 1.2rem;
+            color: var(--text);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+        }
+
+        p,
+        li {
+            font-size: 1rem;
+            line-height: 1.6;
             color: var(--text-muted);
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        ul {
+            list-style-position: inside;
+            margin-bottom: 1rem;
         }
 
         strong {
@@ -112,7 +143,25 @@
             font-weight: 600;
         }
 
-        /* Code Panel Styles */
+        .authors {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* --- VISUAL PANELS (Code & QR) --- */
+        .visual-panel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
         .code-panel {
             background: #121212;
             border-radius: 16px;
@@ -121,23 +170,24 @@
             flex-direction: column;
             box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6), 0 10px 30px rgba(0, 0, 0, 0.3);
             border: 1px solid #2a2a2a;
-            transform: translateZ(0);
+            width: 100%;
+            height: 100%;
         }
 
         .code-header {
             background: #1a1a1a;
-            padding: 12px 18px;
+            padding: 10px 15px;
             display: flex;
             gap: 8px;
             border-bottom: 1px solid #2a2a2a;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .dot {
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            transition: filter 0.2s;
         }
 
         .red {
@@ -152,61 +202,112 @@
             background: #27c93f;
         }
 
-        .code-panel:hover .dot {
-            filter: brightness(1.2);
-        }
-
         pre {
             margin: 0 !important;
             height: 100%;
-            overflow-y: auto !important;
+            overflow: auto !important;
             padding: 1.5rem !important;
             font-family: 'Fira Code', monospace !important;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             line-height: 1.5 !important;
         }
 
-        /* QR Panel Styles */
+        /* QR Panels */
         .qr-panel {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
             flex-direction: column;
+            align-items: center;
             gap: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
         }
 
         .qr-img {
+            width: 220px;
+            height: 220px;
             border-radius: 12px;
             border: 8px solid white;
-            /* Borde blanco para facilitar escaneo */
-            width: 280px;
-            height: 280px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease;
         }
 
-        .qr-img:hover {
-            transform: scale(1.05);
+        /* --- BUTTONS --- */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--accent);
+            color: #000;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 225, 255, 0.4);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 15px;
         }
 
-        .qr-caption {
+        .btn-primary:hover {
+            background: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(0, 225, 255, 0.6);
+        }
+
+        /* --- CONTROLS & COUNTER --- */
+        .controls {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            display: flex;
+            gap: 20px;
+            z-index: 20;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 2px solid var(--accent);
+            padding: 10px 24px;
+            border-radius: 12px;
+            color: var(--accent);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--accent);
+            color: var(--bg-color);
+        }
+
+        .slide-counter {
+            position: absolute;
+            bottom: 45px;
+            left: 50px;
+            z-index: 30;
             font-family: 'Fira Code', monospace;
             color: var(--accent);
-            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 225, 255, 0.2);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
         }
 
-        /* Scrollbar */
+        .slide-counter.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Scrollbar styling */
         ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
+            width: 8px;
+            height: 8px;
         }
 
         ::-webkit-scrollbar-thumb {
@@ -218,130 +319,61 @@
             background: var(--accent);
         }
 
-        /* --- CONTROLS --- */
-        .controls {
-            position: absolute;
-            bottom: 30px;
-            right: 40px;
-            display: flex;
-            gap: 20px;
-            z-index: 20;
-        }
-
-        button {
-            position: relative;
-            background: transparent;
-            border: 2px solid var(--accent);
-            padding: 12px 28px;
-            border-radius: 12px;
-            color: var(--accent);
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            cursor: pointer;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            backdrop-filter: blur(5px);
-        }
-
-        button::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(to bottom right,
-                    rgba(255, 255, 255, 0) 0%,
-                    rgba(255, 255, 255, 0.2) 50%,
-                    rgba(255, 255, 255, 0) 100%);
-            transform: rotate(45deg) translateY(-100%);
-            transition: transform 0.4s ease-out;
-            pointer-events: none;
-        }
-
-        button:hover {
-            background: var(--accent);
-            color: var(--bg-color);
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 15px 30px -5px rgba(0, 225, 255, 0.5), 0 0 15px var(--accent);
-        }
-
-        button:hover::after {
-            transform: rotate(45deg) translateY(100%);
-        }
-
-        button:active {
-            transform: translateY(-1px) scale(0.98);
-            box-shadow: 0 5px 15px -5px rgba(0, 225, 255, 0.5);
-        }
-
-        /* --- SLIDE COUNTER --- */
-        .slide-counter {
-            position: absolute;
-            bottom: 45px;
-            left: 50px;
-            z-index: 30;
-            font-family: 'Fira Code', monospace;
-            color: var(--accent);
-            font-size: 1rem;
-            letter-spacing: 1px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 225, 255, 0.2);
-            opacity: 0;
-            transform: translateY(10px);
-            pointer-events: none;
-            transition: opacity 0.2s ease-in, transform 0.2s ease-in;
-        }
-
-        .slide-counter.visible {
-            opacity: 1;
-            transform: translateY(0);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-        }
-
-        /* --- RESPONSIVE FIX (Mobile) --- */
+        /* Responsive Fixes */
         @media (max-width: 900px) {
             .slide {
                 grid-template-columns: 1fr;
                 grid-template-rows: auto 1fr;
-                gap: 1.5rem;
                 padding: 1.5rem;
                 overflow-y: auto;
+                /* Permitir scroll en la slide entera */
+            }
+
+            .slide.split-content {
+                grid-template-columns: 1fr;
             }
 
             h1 {
-                font-size: 1.8rem;
+                font-size: 1.6rem;
             }
 
-            .code-panel,
-            .qr-panel {
-                min-height: 350px;
+            /* Ajuste crítico para el código en móviles */
+            .visual-panel {
+                min-height: 50vh;
+                /* Altura mínima para ver código */
                 margin-bottom: 80px;
+                /* Espacio para controles */
+                align-items: flex-start;
+                /* Alinear arriba */
             }
 
-            .qr-img {
-                width: 200px;
-                height: 200px;
+            .code-panel {
+                height: 100%;
+                max-height: 60vh;
+                /* Limitar altura máxima */
+            }
+
+            pre {
+                font-size: 0.9rem !important;
+                /* Fuente legible */
+                line-height: 1.6 !important;
+                /* Más espacio entre líneas */
+                padding: 1rem !important;
             }
 
             .controls {
                 bottom: 15px;
                 right: 20px;
-                width: auto;
-            }
-
-            button {
-                padding: 10px 20px;
-                font-size: 0.9rem;
             }
 
             .slide-counter {
                 bottom: 20px;
                 left: 20px;
-                font-size: 0.8rem;
+            }
+
+            .nav-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -351,39 +383,102 @@
 
     <div class="presentation-container">
 
-        <div class="slide active">
+        <div class="slide active split-content">
             <div class="content-panel">
                 <h1>Voice Controlled Maze</h1>
-                <p><strong>Technische Präsentation</strong></p>
-                <p>Willkommen. Dies ist eine exemplarische Darstellung der entscheidenden Codeblöcke des Projekts.</p>
-                <p style="color: var(--accent);">Scannen Sie den QR-Code, um diese Präsentation auf Ihrem Smartphone zu
-                    visualisieren.</p>
+                <p>Human Machine Interaction (HMI) Projekt</p>
+                <p>Eine moderne Webanwendung, die Sprachsteuerung mit klassischen Labyrinth-Algorithmen verbindet.</p>
+
+                <div class="authors">
+                    <p><strong>Entwickelt von:</strong><br>
+                        Juan Fernando Lenis Serna<br>
+                        Ayman Lahseb</p>
+                </div>
             </div>
-            <div class="qr-panel">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://lenis-jf.github.io/voice-maze-presentation/"
-                    class="qr-img" alt="Präsentation QR Code">
-                <span class="qr-caption">Scan to view Slides</span>
+            <div class="visual-panel">
+                <div class="qr-panel">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://lenis-jf.github.io/voice-maze-presentation/"
+                        class="qr-img" alt="Präsentation QR">
+                    <p style="color:var(--text-muted); font-size:0.9rem; margin-top:10px;">Scannen für Slides</p>
+                </div>
             </div>
         </div>
 
         <div class="slide">
             <div class="content-panel">
-                <h1>2. BFS-Algorithmus zum Finden des Ausgangs</h1>
-                <p><strong>Strategie "Farthest Cell":</strong> Implementierung einer Breitensuche (BFS), um das gesamte
-                    Labyrinth vom Startpunkt aus zu durchqueren.</p>
-                <p>Wir berechnen die Distanz zu jeder Zelle und wählen die am weitesten entfernte als "Ausgang" (Exit).
-                </p>
+                <h1>Projektziele & Umfang</h1>
+                <h2>Das Hauptziel</h2>
+                <p>Entwicklung einer <strong>barrierefreien, modernen und responsiven</strong> Webanwendung für
+                    jedermann.</p>
+
+                <h2>Kernfunktionen</h2>
+                <ul>
+                    <li><strong>Zufällige Generierung:</strong> Jedes Spiel ist einzigartig (Algorithmus-basiert).</li>
+                    <li><strong>Anpassbar:</strong> Benutzerdefiniertes Raster (Grid-Size).</li>
+                    <li><strong>Visuelles Feedback:</strong> Konstante Rückmeldung über den Spielstatus.</li>
+                    <li><strong>Engagement:</strong> Fördert kontinuierliche Verbesserung des Spielers.</li>
+                </ul>
+
+                <h2>Steuerung & Accessibility</h2>
+                <p>Unterstützt multimodale Eingaben (Tastatur & Stimme). Auf Mobilgeräten kommen <strong>Floating
+                        Buttons</strong> zum Einsatz, um die Bewegung des Charakters präzise zu steuern.</p>
             </div>
-            <div class="code-panel">
-                <div class="code-header">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
+            <div class="visual-panel">
+                <div class="qr-panel" style="border:none; background:transparent;">
+                    <i class="fas fa-universal-access"
+                        style="font-size: 8rem; color: var(--accent); text-shadow: 0 0 30px rgba(0, 225, 255, 0.4);"></i>
+                    <p style="margin-top:20px; text-align:center;">Unterstützung der Barrierefreiheit durch universelle
+                        Eingabemethoden.</p>
                 </div>
-                <pre><code class="language-javascript">
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-panel">
+                <h1>Warum ist das ein gutes HMI-Projekt?</h1>
+
+                <p><strong>Natürliche Interaktion (NUI):</strong><br>
+                    Ermöglicht durch Sprachsteuerung. Die Schnittstelle passt sich dem Menschen an, nicht umgekehrt.</p>
+
+                <p><strong>Software-Ergonomie:</strong><br>
+                    Das System ist leicht erlernbar und intuitiv zu bedienen. Es erfordert keine komplexe Einarbeitung.
+                </p>
+
+                <p><strong>System-Feedback & Status:</strong><br>
+                    Auch wenn die Sprachverarbeitung Zeit benötigt, gibt das System visuelles Feedback (z.B.
+                    "Listening..."), um die Latenz für den Nutzer transparent zu machen.</p>
+
+                <p><strong>Multimodale Eingabe:</strong><br>
+                    Kombination aus diskreten (Tastatur/Touch) und kontinuierlichen (Sprache) Eingabemethoden.</p>
+            </div>
+            <div class="visual-panel">
+                <div class="qr-panel" style="border:none; background:transparent;">
+                    <i class="fas fa-microphone-lines" style="font-size: 8rem; color: var(--text-muted);"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-panel">
+                <h1>1. Algorithmus: BFS (Farthest Cell)</h1>
+                <p>Wir nutzen eine <strong>Breitensuche (BFS)</strong>, um das gesamte Labyrinth vom Startpunkt aus zu
+                    durchqueren.</p>
+                <p>Dabei wird die Distanz zu jeder Zelle berechnet. Die Zelle mit der maximalen Distanz wird automatisch
+                    als "Exit" (Ziel) definiert. Dies garantiert, dass das Ziel immer an einer herausfordernden Position
+                    liegt.</p>
+            </div>
+            <div class="visual-panel">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <pre><code class="language-javascript">
 // src/components/Maze.jsx
 
 function bfs(startCell, cells) {
+  // Distanzen zurücksetzen
   for (let cell of cells) {
     cell.distanceToStart = Infinity;
     cell.isExit = false;
@@ -395,6 +490,7 @@ function bfs(startCell, cells) {
   while (queue.length > 0) {
     const currentCell = queue.shift();
     // findNeighborsBFS gibt erreichbare Nachbarn zurück 
+    // (ohne Wände dazwischen)
     for (let neighbor of findNeighborsBFS(currentCell, cells)) {
       if (!localVisited.has(neighbor)) {
         localVisited.add(neighbor);
@@ -404,25 +500,40 @@ function bfs(startCell, cells) {
     }
   }
 }
-                </code></pre>
+
+function findLongestPath(cells) {
+  let maxDistance = -1;
+  let exitCell = null;
+  for (let cell of cells) {
+    if (cell.distanceToStart !== Infinity && 
+        cell.distanceToStart > maxDistance) {
+      maxDistance = cell.distanceToStart;
+      exitCell = cell;
+    }
+  }
+  return exitCell;
+}
+                    </code></pre>
+                </div>
             </div>
         </div>
 
         <div class="slide">
             <div class="content-panel">
-                <h1>3. Backtracking-Algorithmus (Generierung)</h1>
-                <p><strong>Das Herzstück der Labyrinth-Erstellung.</strong></p>
-                <p>Es wird eine iterative Backtracking-Technik mit einem Stack verwendet. Der Algorithmus besucht eine
-                    Zelle, durchbricht Wände zu zufälligen Nachbarn und rückt vor. Wenn er keine Optionen mehr hat, geht
-                    er zurück (Stack Pop), bis ein neuer Weg gefunden wird.</p>
+                <h1>2. Generierung: Backtracking</h1>
+                <p>Das Herzstück der Labyrinth-Erstellung. Wir verwenden <strong>Iteratives Backtracking</strong> mit
+                    einem Stack.</p>
+                <p>Der Algorithmus besucht eine Zelle, wählt einen zufälligen Nachbarn, durchbricht die Wand und rückt
+                    vor. Wenn es keine Nachbarn gibt, geht er zurück (Stack Pop), bis ein neuer Weg gefunden wird.</p>
             </div>
-            <div class="code-panel">
-                <div class="code-header">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
-                </div>
-                <pre><code class="language-javascript">
+            <div class="visual-panel">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <pre><code class="language-javascript">
 // src/components/Maze.jsx (innerhalb der Animationsschleife)
 
 // DFS-Algorithmus (Backtracking)
@@ -431,48 +542,51 @@ if (localCurrent) {
   if (next) {
     next.visited = true;
     
-    // Zum Stack hinzufügen, um "zurückkehren" zu können
+    // Zum Stack hinzufügen für Rückweg
     localStack.push(localCurrent);
     
-    // Wände zwischen aktueller und nächster Zelle einreißen
+    // Wände zwischen Zellen entfernen
     removeWalls(localCurrent, next);
     
     // Zeiger bewegen
     localCurrent = next;
   } else if (localStack.length > 0) {
-    // Wenn keine Nachbarn vorhanden, zurückgehen (Backtracking)
+    // Wenn keine Nachbarn, Backtracking
     localCurrent = localStack.pop();
   }
 }
-                </code></pre>
+                    </code></pre>
+                </div>
             </div>
         </div>
 
         <div class="slide">
             <div class="content-panel">
-                <h1>4. Spielerlogik (Klasse Player)</h1>
+                <h1>3. Spielerlogik (Klasse Player)</h1>
                 <p>Die Klasse <code>Player</code> kapselt die Physik und die interpolierte Bewegung.</p>
-                <p>Hervorzuheben ist die Methode <code>update</code>, die eine Easing-Funktion
-                    (<strong>easeOutSine</strong>) verwendet, um die Bewegung zwischen den Zellen zu glätten.</p>
+                <p>Hervorzuheben ist die Methode <code>update</code>, die <strong>easeOutSine</strong> für weiche
+                    Bewegungen nutzt, sowie eine "Bounce"-Logik für visuelles Feedback bei Kollisionen.</p>
             </div>
-            <div class="code-panel">
-                <div class="code-header">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
-                </div>
-                <pre><code class="language-javascript">
+            <div class="visual-panel">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <pre><code class="language-javascript">
 // src/components/Player.js
 
 export default class Player {
   constructor(startCell, cellSize, options = {}) {
     this.cellSize = cellSize;
     this.setPositionFromCell(startCell);
+    // ... Initialisierung von Zustandsvariablen
   }
 
-  // update wird in jedem Frame der Spielschleife aufgerufen
+  // update wird jeden Frame aufgerufen
   update(dt) {
-    // Weiche Bewegung zwischen startPos und endPos
+    // Weiche Bewegung zwischen Positionen
     if (this.progress < 1) {
       this.elapsed += dt;
       const t = Math.min(1, this.elapsed / this.moveDuration);
@@ -484,30 +598,34 @@ export default class Player {
       this.progress = t;
     }
 
+    // Unabhängige Logik für Kollisionen
     if (this.bouncing) {
-      // ... Berechnungen zur Simulation des visuellen Aufpralls
+      // ... Berechnungen für visuellen Aufprall
     }
   }
+  
+  // ... Methoden moveTo, draw, etc.
 }
-                </code></pre>
+                    </code></pre>
+                </div>
             </div>
         </div>
 
         <div class="slide">
             <div class="content-panel">
-                <h1>5. Klasse Zelle (Cell)</h1>
+                <h1>4. Klasse Zelle (Cell)</h1>
                 <p>Die fundamentale Einheit des Rasters.</p>
-                <p>Sie verwaltet ihre Position, ihren Zustand (besucht, Start, Ende) und ihre <strong>4 Wände</strong>.
-                    Sie enthält die Logik <code>checkNeighbors</code> für die zufällige Generierung und ihre eigene
-                    Zeichenmethode für das Canvas.</p>
+                <p>Sie verwaltet Position, Zustand (visited, start, exit) und die <strong>4 Wände</strong>. Enthält auch
+                    die <code>checkNeighbors</code> Logik für die Zufallsgenerierung.</p>
             </div>
-            <div class="code-panel">
-                <div class="code-header">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
-                </div>
-                <pre><code class="language-javascript">
+            <div class="visual-panel">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <pre><code class="language-javascript">
 // src/components/Maze.jsx
 
 function Cell(i, j, size, cols, rows) {
@@ -516,12 +634,12 @@ function Cell(i, j, size, cols, rows) {
   this.walls = [true, true, true, true]; // [Oben, Rechts, Unten, Links]
   this.visited = false;
   
-  // Methode zur Suche nach nicht besuchten Nachbarn
+  // Methode: Unbesuchte Nachbarn suchen
   this.checkNeighbors = function (cells) {
     const neighbors = [];
-    // ... Logik zum Abrufen von Nachbarindizes
+    // ... Logik um Nachbarn zu finden
     
-    // Gibt einen zufälligen Nachbarn zurück, falls vorhanden
+    // Gibt zufälligen Nachbarn zurück
     if (neighbors.length > 0) {
       return neighbors[Math.floor(Math.random() * neighbors.length)];
     }
@@ -529,36 +647,38 @@ function Cell(i, j, size, cols, rows) {
   };
 
   this.draw = function (ctx) {
-    // Zeichnet nur die Wände, die 'true' sind
-    if (this.walls[0]) { ctx.moveTo(x, y); ctx.lineTo(x + size, y); }
-    if (this.walls[1]) { ctx.moveTo(x + size, y); ctx.lineTo(x + size, y + size); }
+    // Nur aktive Wände zeichnen
+    if (this.walls[0]) { ctx.moveTo(x, y); ctx.lineTo(x + size, y); } // Oben
+    if (this.walls[1]) { ctx.moveTo(x + size, y); ctx.lineTo(x + size, y + size); } // Rechts
     // ... usw.
   };
 }
-                </code></pre>
+                    </code></pre>
+                </div>
             </div>
         </div>
 
         <div class="slide">
             <div class="content-panel">
-                <h1>6. Optimierung (Offscreen Canvas)</h1>
-                <p>Zur Vermeidung von Leistungsproblemen (niedrige FPS).</p>
-                <p>Implementierung von <strong>Double Buffer</strong>. Das statische Labyrinth wird nur EINMAL in den
-                    Speicher gezeichnet. In jedem Frame "kopieren" wir dieses Bild und zeichnen den Spieler darüber.</p>
+                <h1>5. Rendering & Optimierung</h1>
+                <p>Implementierung von <strong>Offscreen Canvas</strong> (Double Buffer).</p>
+                <p>Das statische Labyrinth wird nur EINMAL in den Speicher gezeichnet. In jedem Frame wird dieses Bild
+                    kopiert und nur der Spieler neu gezeichnet. Dies verbessert die Performance drastisch.</p>
             </div>
-            <div class="code-panel">
-                <div class="code-header">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
-                </div>
-                <pre><code class="language-javascript">
+            <div class="visual-panel">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <pre><code class="language-javascript">
 // src/components/Maze.jsx
 
 const drawMazeToOffscreen = useCallback((cols, rows, cellsArray) => {
   // ... Konfiguration des Offscreen-Canvas
   
-  // Wir zeichnen alle Zellen HIER nur EINMAL
+  // Alle Zellen EINMAL zeichnen
   for (const cell of cellsArray) {
       cell.draw(offCtx);
   }
@@ -566,34 +686,38 @@ const drawMazeToOffscreen = useCallback((cols, rows, cellsArray) => {
 
 const redrawAll = useCallback(() => {
   const ctx = ctxRef.current; // Sichtbares Canvas
+  
+  // Canvas leeren
   ctx.clearRect(0, 0, width, height);
   
-  // Kopieren des statischen Labyrinthbildes sofort
+  // Statisches Bild kopieren
   if (offscreenCanvasRef.current) {
     ctx.drawImage(offscreenCanvasRef.current, 0, 0, width, height);
   }
 }, []);
-                </code></pre>
+                    </code></pre>
+                </div>
             </div>
         </div>
 
         <div class="slide">
             <div class="content-panel">
-                <h1>7. Sprachsteuerung (WebSpeech API)</h1>
-                <p>Native Browser-Integration für Barrierefreiheit und modernes Gameplay.</p>
-                <p>Wir konfigurieren die kontinuierliche Erkennung und erfassen das <code>transcript</code> in Echtzeit,
-                    um es an den Befehlsprozessor zu senden.</p>
+                <h1>6. Sprachsteuerung (WebSpeech API)</h1>
+                <p>Integration der nativen Browser-API für Barrierefreiheit.</p>
+                <p>Konfiguriert für kontinuierliche Erkennung. Das <code>transcript</code> wird in Echtzeit erfasst und
+                    an den Befehlsprozessor gesendet.</p>
             </div>
-            <div class="code-panel">
-                <div class="code-header">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
-                </div>
-                <pre><code class="language-javascript">
+            <div class="visual-panel">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <pre><code class="language-javascript">
 // src/hooks/useVoiceControl.js
 
-// Grundlegende Konfiguration der Erkennung
+// Grundlegende Konfiguration
 const recognition = new SpeechRecognition();
 recognition.lang = lang;
 recognition.continuous = true;
@@ -602,71 +726,147 @@ recognition.interimResults = false;
 recognition.onresult = (event) => {
     const lastResult = event.results[event.results.length - 1];
     const transcript = lastResult[0].transcript;
-    // Callback an die Hauptkomponente mit dem gehörten Text
+    // Callback mit erkanntem Text
     onResult({ transcript, confidence: lastResult[0].confidence });
 };
-                </code></pre>
+                    </code></pre>
+                </div>
             </div>
         </div>
 
         <div class="slide">
             <div class="content-panel">
-                <h1>8. Interpretation mit Regex</h1>
-                <p>Analyse natürlicher Sprache für komplexe Befehle.</p>
-                <p>Wir verwenden <strong>Reguläre Ausdrücke</strong>, um Mengen ("zwei", "3") und Richtungen zu
-                    extrahieren. Dies ermöglicht es dem Benutzer, "Dreimal hoch" zu sagen.</p>
+                <h1>7. Interpretation (Regex)</h1>
+                <p>Verarbeitung natürlicher Sprache.</p>
+                <p>Wir nutzen <strong>Reguläre Ausdrücke</strong>, um Zahlen (z.B. "drei") und Befehle zu extrahieren.
+                    Ermöglicht komplexe Befehle wie "Drei mal oben".</p>
             </div>
-            <div class="code-panel">
-                <div class="code-header">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
-                </div>
-                <pre><code class="language-javascript">
+            <div class="visual-panel">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <pre><code class="language-javascript">
 // src/utils/voiceCommandsMap.js
 
 export function interpretSequence(transcript = "") {
-    // Erkennen von Zahlen gefolgt von einem Befehl
+    // Zahlen und Befehle erkennen
     const numMatch = part.match(/\b(\d+|uno|dos|three|four...)\b/);
     
-    // Wenn eine Zahl vorhanden ist, Wiederholungen festlegen
+    // Wenn Zahl, Wiederholungen setzen
     if (numMatch) repeat = parseNumberToken(numMatch[1]) || 1;
 
-    // Suche nach Richtungs-Schlüsselwörtern
+    // Nach Richtungswörtern suchen
     for (const w of words) {
-        const cmd = interpretVoiceCommand(w); // Gibt "UP", "DOWN" zurück
+        const cmd = interpretVoiceCommand(w); // Gibt "UP", "DOWN" usw.
         if (cmd) found.push(cmd);
     }
     
-    // Multiplizieren der gefundenen Befehle
+    // Befehle vervielfachen
     for (let r = 0; r < repeat; r++) {
         out.push(...found);
     }
     return out;
 }
-                </code></pre>
+                    </code></pre>
+                </div>
             </div>
         </div>
 
         <div class="slide">
             <div class="content-panel">
-                <h1>Vielen Dank!</h1>
-                <p>Das Projekt ist live und spielbar.</p>
-                <p>Testen Sie Ihre Fähigkeiten und die Sprachsteuerung direkt im Browser.</p>
-                <p style="color: var(--accent);"><strong>Scannen Sie den QR-Code, um zum Spiel zu gelangen.</strong></p>
+                <h1>GOMS-CMN Analyse</h1>
+                <p>Modellierung der Benutzerinteraktion für die Aufgabe "Labyrinth lösen".</p>
+
+                <h2>Goals & Methods</h2>
+                <ul>
+                    <li><strong>GOAL:</strong> Solve Maze</li>
+                    <li><strong>METHOD 1:</strong> Use Voice Control (Say "Up", "Down")</li>
+                    <li><strong>METHOD 2:</strong> Use Keyboard (WASD / Arrows)</li>
+                    <li><strong>METHOD 3:</strong> Use Touch Buttons</li>
+                </ul>
+
+                <h2>Selection Rules (Beispiel)</h2>
+                <p><em>RULE 1:</em> Select USE-KEYBOARD if no microphone is available.<br>
+                    <em>RULE 2:</em> Select USE-TOUCH if mobile device is detected.
+                </p>
             </div>
-            <div class="qr-panel">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://lenis-jf.github.io/voice-controlled-maze/"
-                    class="qr-img" alt="Maze Game QR Code">
-                <span class="qr-caption">Scan to Play</span>
+            <div class="visual-panel">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <pre><code class="language-javascript">
+GOAL: SOLVE-MAZE-USING-VOICE-CONTROL
+    GOAL: ENABLE-VOICE-CONTROL
+        MOVE-MOUSE-TO-MICROPHONE-BUTTON
+        CLICK-LEFT-MOUSE-BUTTON
+    GOAL: NAVIGATE
+        SAY-VOICE-COMMAND('UP'/'DOWN'/'RIGHT'/'LEFT')
+        VERIFY-MOVEMENT-FEEDBACK
+        REPEAT-UNTIL-EXIT
+                    </code></pre>
+                </div>
             </div>
         </div>
 
-        <div class="slide-counter">Folie <span id="current">1</span> / <span id="total">9</span></div>
+        <div class="slide">
+            <div class="content-panel">
+                <h1>Geplante Evaluierung & User Testing</h1>
+                <p>Wir planen eine quantitative Umfrage, um das System zu validieren.</p>
+
+                <h2>Struktur der Umfrage</h2>
+                <p><strong>30 Fragen</strong> in 4 Hauptkategorien (Skala 1-5):</p>
+                <ol>
+                    <li><strong>Design & Visuelles Feedback:</strong> Übersichtlichkeit, Icons, Kontrast.</li>
+                    <li><strong>Bedienbarkeit & Technik:</strong> Stabilität, Menüführung, Performance.</li>
+                    <li><strong>Sprachsteuerung:</strong> Erkennungsrate, Intuitivität der Befehle.</li>
+                    <li><strong>Gesamteindruck:</strong> Spielspaß und Lernkurve.</li>
+                </ol>
+
+                <p style="margin-top:20px; color:var(--accent);">Nehmen Sie an der Umfrage teil:</p>
+                <a href="#ENCUESTA_PENDIENTE" class="btn-primary"
+                    onclick="alert('Link zur Umfrage noch nicht verfügbar.'); return false;">
+                    <i class="fas fa-poll-h"></i> Zur Umfrage
+                </a>
+            </div>
+            <div class="visual-panel">
+                <div class="qr-panel">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=EncuestaPendiente"
+                        class="qr-img" alt="Umfrage QR">
+                    <p style="color:var(--text-muted); font-size:0.9rem; margin-top:10px;">Scan to Evaluate</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide split-content">
+            <div class="content-panel">
+                <h1>Vielen Dank!</h1>
+                <p>Das Projekt ist live verfügbar.</p>
+                <p>Testen Sie Ihre Fähigkeiten und die Sprachsteuerung direkt im Browser.</p>
+
+                <a href="https://lenis-jf.github.io/voice-controlled-maze/" target="_blank" class="btn-primary">
+                    <i class="fas fa-play"></i> Jetzt Spielen
+                </a>
+            </div>
+            <div class="visual-panel">
+                <div class="qr-panel">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://lenis-jf.github.io/voice-controlled-maze/"
+                        class="qr-img" alt="Spiel QR Code">
+                    <p style="color:var(--accent); margin-top:10px; font-family:'Fira Code'">Scan to Play</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-counter">Folie <span id="current">1</span> / <span id="total">13</span></div>
 
         <div class="controls">
-            <button onclick="prevSlide()">← Zurück</button>
-            <button onclick="nextSlide()">Weiter →</button>
+            <button class="nav-btn" onclick="prevSlide()">← Zurück</button>
+            <button class="nav-btn" onclick="nextSlide()">Weiter →</button>
         </div>
     </div>
 
@@ -676,23 +876,15 @@ export function interpretSequence(transcript = "") {
         const counterCurrent = document.getElementById('current');
         const counterTotal = document.getElementById('total');
         const counterEl = document.querySelector('.slide-counter');
-
-        // Inicializar contador total automáticamente
-        counterTotal.innerText = slides.length;
-
-        // Variable para guardar el temporizador
         let hideTimer;
 
+        // Inicializar total dinámicamente
+        counterTotal.innerText = slides.length;
+
         function showCounter() {
-            // 1. Mostrar inmediatamente añadiendo la clase
             counterEl.classList.add('visible');
-
-            // 2. Limpiar cualquier temporizador anterior (para que no se oculte si diste click rápido)
             if (hideTimer) clearTimeout(hideTimer);
-
-            // 3. Crear un nuevo temporizador de 3 segundos
             hideTimer = setTimeout(() => {
-                // Pasados 3 segundos, quitamos la clase y el CSS se encarga del Fade Out
                 counterEl.classList.remove('visible');
             }, 3000);
         }
@@ -702,8 +894,6 @@ export function interpretSequence(transcript = "") {
                 slide.classList.toggle('active', i === index);
             });
             counterCurrent.innerText = index + 1;
-
-            // Disparar la lógica del contador
             showCounter();
         }
 
@@ -721,15 +911,16 @@ export function interpretSequence(transcript = "") {
             }
         }
 
+        // Teclado
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
             if (e.key === 'ArrowLeft') prevSlide();
         });
 
-        // Mostrar al cargar por primera vez
+        // Mostrar contador inicial
         showCounter();
-
     </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
 
