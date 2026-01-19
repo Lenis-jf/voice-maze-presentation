@@ -23,7 +23,6 @@ body {
     font-family: 'Inter', sans-serif;
     height: 100vh;
     overflow: hidden;
-    /* Desktop: sin scroll */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -148,69 +147,22 @@ strong {
     overflow: hidden;
 }
 
-.tech-list {
-    list-style: none;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    padding: 0 2rem;
-}
-
-.tech-list li {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 1.5rem;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 1.5rem;
-    font-weight: 600;
-    transition: transform 0.3s ease, background 0.3s ease;
-}
-
-.tech-list li:hover {
-    transform: translateX(10px);
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--accent);
-}
-
-.tech-list i {
-    font-size: 2rem;
-    width: 50px;
-    text-align: center;
-}
-
-/* Ajuste para móvil */
-@media (max-width: 900px) {
-    .tech-list {
-        padding: 0;
-    }
-
-    .tech-list li {
-        font-size: 1.2rem;
-        padding: 1rem;
-    }
-
-    .tech-list i {
-        font-size: 1.5rem;
-    }
-}
-
+/* --- ESTILOS DE IMAGEN SCREENSHOT (SLIDE 3) --- */
 .screenshot-panel {
     width: 100%;
-    height: max-content;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    aspect-ratio: 16/9;
-    max-width: 700px;
 }
 
 .screenshot-img {
-    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
     height: auto;
+    object-fit: contain;
+    /* Asegura que la imagen no se recorte */
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     border: 1px solid #2a2a2a;
@@ -264,6 +216,41 @@ pre {
     font-family: 'Fira Code', monospace !important;
     font-size: 0.9rem;
     line-height: 1.5 !important;
+}
+
+/* --- LISTA DE TECNOLOGÍAS --- */
+.tech-list {
+    list-style: none;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0 2rem;
+}
+
+.tech-list li {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1.5rem;
+    font-weight: 600;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.tech-list li:hover {
+    transform: translateX(10px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent);
+}
+
+.tech-list i {
+    font-size: 2rem;
+    width: 50px;
+    text-align: center;
 }
 
 /* QR Panels */
@@ -384,45 +371,36 @@ pre {
 /* --- RESPONSIVE MOBILE FIX --- */
 @media (max-width: 900px) {
     body {
-        /* Permitir scroll en la página principal */
         overflow-y: auto;
         height: auto;
         min-height: 100vh;
         display: block;
-        /* Quitar flex center para que fluya */
         padding: 20px 0;
     }
 
     .presentation-container {
         height: auto;
-        /* Altura automática */
         min-height: 100vh;
         width: 100%;
         max-width: 100%;
         margin: 0;
         padding-bottom: 80px;
-        /* Espacio para botones flotantes */
         overflow: visible;
-        /* Permitir que los hijos crezcan */
     }
 
     .slide {
-        /* Cambiar de posición absoluta (stack) a relativa */
         position: relative;
         display: none;
-        /* Ocultar por defecto */
         grid-template-columns: 1fr;
         grid-template-rows: auto auto;
         padding: 1.5rem;
         height: auto;
-        /* Permitir crecer */
         opacity: 1;
         transform: none;
         visibility: visible;
         overflow: visible;
     }
 
-    /* Solo mostramos la activa */
     .slide.active {
         display: grid;
         animation: fadeEffect 0.5s ease;
@@ -450,12 +428,10 @@ pre {
 
     .content-panel {
         overflow: visible;
-        /* En móvil no scrollea el panel, scrollea la página */
     }
 
     .visual-panel {
         min-height: 50vh;
-        /* Altura mínima para el código */
         margin-top: 20px;
         margin-bottom: 20px;
         align-items: flex-start;
@@ -463,22 +439,31 @@ pre {
 
     .code-panel {
         height: auto;
-        /* Crece con el código */
         min-height: 300px;
     }
 
-    /* Aumentar legibilidad en móvil */
     pre {
         font-size: 0.95rem !important;
         line-height: 1.6 !important;
         padding: 1rem !important;
         white-space: pre-wrap;
-        /* Opcional: permite salto de línea si prefieres */
+    }
+
+    .tech-list {
+        padding: 0;
+    }
+
+    .tech-list li {
+        font-size: 1.2rem;
+        padding: 1rem;
+    }
+
+    .tech-list i {
+        font-size: 1.5rem;
     }
 
     .controls {
         position: fixed;
-        /* Fijos en pantalla móvil */
         bottom: 20px;
         right: 20px;
         background: rgba(0, 0, 0, 0.8);
@@ -496,5 +481,77 @@ pre {
     .nav-btn {
         padding: 10px 16px;
         font-size: 0.9rem;
+    }
+}
+
+/* --- AJUSTES PARA EXPORTAR A PDF (CORREGIDO) --- */
+@media print {
+
+    html,
+    body {
+        height: auto !important;
+        overflow: visible !important;
+        background-color: #0a0f1d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        display: block !important;
+    }
+
+    .presentation-container {
+        position: static !important;
+        height: auto !important;
+        width: 100% !important;
+        max-width: none !important;
+        overflow: visible !important;
+        transform: none !important;
+        display: block !important;
+        /* Importante para que fluyan */
+    }
+
+    .slide {
+        display: block !important;
+        /* Cambiado a block para evitar problemas de grid al imprimir */
+        position: relative !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
+        width: 100% !important;
+        height: 100vh !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        padding: 40px !important;
+        /* Padding extra para impresión */
+    }
+
+    /* Ocultar la interfaz */
+    .controls,
+    .nav-btn,
+    .slide-counter {
+        display: none !important;
+    }
+
+    /* Asegurar que el contenido se vea */
+    .code-panel,
+    .visual-panel,
+    .content-panel {
+        height: auto !important;
+        overflow: visible !important;
+        display: block !important;
+    }
+
+    pre {
+        white-space: pre-wrap !important;
+        overflow: visible !important;
+    }
+
+    /* Asegurar que el contenido dividido se muestre uno tras otro */
+    .slide.split-content,
+    .slide {
+        grid-template-columns: 1fr !important;
     }
 }
