@@ -687,7 +687,7 @@ pre::-webkit-scrollbar-corner {
 .menu-items-container {
     display: flex;
     gap: 20px;
-    padding: 20px 50px; /* Extra padding for mask space */
+    padding: 20px 30px;
     overflow-x: auto;
     width: 100%;
     height: 100%;
@@ -695,21 +695,28 @@ pre::-webkit-scrollbar-corner {
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
     position: relative;
-    /* CSS mask for scroll hint */
-    mask-image: linear-gradient(
-        to right,
-        transparent,
-        black 40px,
-        black calc(100% - 80px),
-        transparent
-    );
-    -webkit-mask-image: linear-gradient(
-        to right,
-        transparent,
-        black 40px,
-        black calc(100% - 80px),
-        transparent
-    );
+}
+
+/* Scroll hint shadows using box-shadow on wrapper */
+.slide-nav-menu::before,
+.slide-nav-menu::after {
+    content: '';
+    position: absolute;
+    top: 50px; /* Below header */
+    bottom: 0;
+    width: 40px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.slide-nav-menu::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(14, 20, 35, 0.9), transparent);
+}
+
+.slide-nav-menu::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(14, 20, 35, 0.9), transparent);
 }
 
 .menu-items-container::-webkit-scrollbar {
