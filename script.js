@@ -118,15 +118,17 @@ if (menuToggle && slideNavMenu && closeMenu) {
         slideNavMenu.classList.remove('active');
     });
 
-    // Close when clicking or touching outside content
+    // Close when clicking outside content (only on desktop)
+    const isMobile = () => window.innerWidth <= 900;
+    
     const closeMenuOutside = (e) => {
+        if (isMobile()) return; // Disable on mobile to prevent closing on scroll
         if (!slideNavMenu.contains(e.target) && !menuToggle.contains(e.target) && slideNavMenu.classList.contains('active')) {
             slideNavMenu.classList.remove('active');
         }
     };
     
     document.addEventListener('click', closeMenuOutside);
-    document.addEventListener('touchstart', closeMenuOutside); // Add touch support for mobile
 }
 
 initMenu();

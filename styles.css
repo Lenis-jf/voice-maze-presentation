@@ -14,6 +14,10 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     background-color: var(--bg-color);
     background-image:
@@ -397,6 +401,7 @@ pre::-webkit-scrollbar-corner {
 /* --- RESPONSIVE MOBILE FIX --- */
 @media (max-width: 900px) {
     body {
+        overflow-x: hidden;
         overflow-y: auto;
         height: auto;
         min-height: 100vh;
@@ -457,7 +462,7 @@ pre::-webkit-scrollbar-corner {
     }
 
     .visual-panel {
-        min-height: 50vh;
+        /* min-height: 50vh; */
         margin-top: 20px;
         margin-bottom: 20px;
         align-items: flex-start;
@@ -682,13 +687,29 @@ pre::-webkit-scrollbar-corner {
 .menu-items-container {
     display: flex;
     gap: 20px;
-    padding: 20px 30px;
+    padding: 20px 50px; /* Extra padding for mask space */
     overflow-x: auto;
     width: 100%;
     height: 100%;
     align-items: center;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    position: relative;
+    /* CSS mask for scroll hint */
+    mask-image: linear-gradient(
+        to right,
+        transparent,
+        black 40px,
+        black calc(100% - 80px),
+        transparent
+    );
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent,
+        black 40px,
+        black calc(100% - 80px),
+        transparent
+    );
 }
 
 .menu-items-container::-webkit-scrollbar {
@@ -757,8 +778,18 @@ pre::-webkit-scrollbar-corner {
 /* Mobile Adjustments for Menu */
 @media (max-width: 900px) {
     .slide-nav-menu {
-        position: sticky;
+        position: fixed;
+        bottom: -300px; /* Hidden off-screen when not active */
         height: 180px;
+        visibility: hidden;
+        pointer-events: none;
+        z-index: 999;
+    }
+
+    .slide-nav-menu.active {
+        bottom: 0;
+        visibility: visible;
+        pointer-events: auto;
     }
     
     .menu-item {
