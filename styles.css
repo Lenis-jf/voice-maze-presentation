@@ -635,7 +635,7 @@ pre::-webkit-scrollbar-corner {
 }
 
 .slide-nav-menu {
-    position: fixed;
+    position: absolute;
     bottom: -300px; /* Hidden initially */
     left: 0;
     width: 100%;
