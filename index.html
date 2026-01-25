@@ -102,7 +102,7 @@
 
                 <h2>Frontend: React.js</h2>
                 <p>Da die Webanwendung stark von konstantem I/O und schnellen Status-Updates abhängt, haben wir uns für
-                    <strong>React.js</strong> entschieden.
+                    <strong>React.js</strong> entschieden. Es verwaltet den DOM effizient durch das Virtual DOM.
                 </p>
 
                 <h2>Styling: SCSS</h2>
@@ -170,35 +170,35 @@
                     </div>
                     <pre><code class="language-javascript">
 GOMS-CMN
-GOAL: 	Solve a maze
-.		[select		GOAL:		USE-VOICE-CONTROL-METHOD
-.		.			GOAL:		USE-KEYBOARD-KEYS-METHOD
-.		.			GOAL:		USE-TOUCH-BUTTONS]
+GOAL:   Solve a maze
+.       [select     GOAL:       USE-VOICE-CONTROL-METHOD
+.       .           GOAL:       USE-KEYBOARD-KEYS-METHOD
+.       .           GOAL:       USE-TOUCH-BUTTONS]
                 
-GOAL:		USE-VOICE-CONTROL-METHOD
-.		.		.		GOAL: GENERATE-MAZE
-.		.		.		                    MOVE-MOUSE-TO-GENERATE-MAZE-BUTTON
-.		.		.				  CLICK-LEFT-MOUSE-BUTTON
-.		.		.		GOAL: ENABLE-VOICE-CONTROL
-.		.		.				MOVE-MOUSE-TO-MICROPHONE-BUTTON
-.		.		.				CLICK-LEFT-MOUSE-BUTTON
-.		.		.		GOAL: SOLVE-MAZE-USING-VOICE-CONTROL
-.		.		.				SAY-VOICE-COMMAND(’UP’/’DOWN’/’RIGHT’/’LEFT’)
-.		.		.				REACH-THE-END-USING-VOICE-COMMANDS
+GOAL:       USE-VOICE-CONTROL-METHOD
+.       .       .       GOAL: GENERATE-MAZE
+.       .       .                           MOVE-MOUSE-TO-GENERATE-MAZE-BUTTON
+.       .       .                 CLICK-LEFT-MOUSE-BUTTON
+.       .       .       GOAL: ENABLE-VOICE-CONTROL
+.       .       .               MOVE-MOUSE-TO-MICROPHONE-BUTTON
+.       .       .               CLICK-LEFT-MOUSE-BUTTON
+.       .       .       GOAL: SOLVE-MAZE-USING-VOICE-CONTROL
+.       .       .               SAY-VOICE-COMMAND(’UP’/’DOWN’/’RIGHT’/’LEFT’)
+.       .       .               REACH-THE-END-USING-VOICE-COMMANDS
                 
-GOAL:		USE-KEYBOARD-KEYS-METHOD
-.		.		.		GOAL: GENERATE-MAZE
-.		.		.			MOVE-MOUSE-TO-GENERATE-MAZE-BUTTON
-.		.		.			CLICK-LEFT-MOUSE-BUTTON
-.		.		.		GOAL: NAVIGATE-MAZE-USING- KEYBOARD-KEYS-
-.		.		.			PRESS-KEYBOARD-KEYS(“W”/”S”/”A”/”D”)
-.		.		.			REACH-THE-END-USING-KEYBOARD-KEYS
-GOAL:		USE-TOUCH-BUTTONS-METHOD
-.		.		.		GOAL:GENERATE-MAZE
-.		.		.			PRESS-GENERATE-MAZE-BUTTON-WITH-FINGER
-.		.		.		GOAL:NAVIGATE-MAZE-USING-TOUCH-SCREEN
-.		.		.			PRESS-ARROW-BUTTONS-TO-NAVIGATE-USING-FINGER-ON-SCREEN
-.		.		.			REACH-THE-END.
+GOAL:       USE-KEYBOARD-KEYS-METHOD
+.       .       .       GOAL: GENERATE-MAZE
+.       .       .           MOVE-MOUSE-TO-GENERATE-MAZE-BUTTON
+.       .       .           CLICK-LEFT-MOUSE-BUTTON
+.       .       .       GOAL: NAVIGATE-MAZE-USING- KEYBOARD-KEYS-
+.       .       .           PRESS-KEYBOARD-KEYS(“W”/”S”/”A”/”D”)
+.       .       .           REACH-THE-END-USING-KEYBOARD-KEYS
+GOAL:       USE-TOUCH-BUTTONS-METHOD
+.       .       .       GOAL:GENERATE-MAZE
+.       .       .           PRESS-GENERATE-MAZE-BUTTON-WITH-FINGER
+.       .       .       GOAL:NAVIGATE-MAZE-USING-TOUCH-SCREEN
+.       .       .           PRESS-ARROW-BUTTONS-TO-NAVIGATE-USING-FINGER-ON-SCREEN
+.       .       .           REACH-THE-END.
 RULE 1: Select USE-KEYBOARD-KEYS-METHOD if no microphone is available
 RULE 2: Select USE-TOUCH-BUTTONS-METHOD if no keyboard is available
                             </code></pre>
@@ -208,12 +208,18 @@ RULE 2: Select USE-TOUCH-BUTTONS-METHOD if no keyboard is available
 
         <div class="slide">
             <div class="content-panel">
-                <h1>1. Algorithmus: BFS (Farthest Cell)</h1>
-                <p>Wir nutzen eine <strong>Breitensuche (BFS)</strong>, um das gesamte Labyrinth vom Startpunkt aus zu
-                    durchqueren.</p>
-                <p>Dabei wird die Distanz zu jeder Zelle berechnet. Die Zelle mit der maximalen Distanz wird automatisch
-                    als "Exit" (Ziel) definiert. Dies garantiert, dass das Ziel immer an einer herausfordernden Position
-                    liegt.</p>
+                <h1>1. Datenstruktur: Klasse "Cell"</h1>
+                <p>Die <code>Cell</code> ist die fundamentale Einheit. Sie ist nicht nur ein grafisches Element, sondern
+                    ein <strong>Knoten im Graphen</strong>.</p>
+
+                <h2>Technische Highlights</h2>
+                <ul>
+                    <li><strong>Topologie:</strong> Das Array <code>walls</code> definiert die Kanten des Graphen.</li>
+                    <li><strong>Speicher-Optimierung:</strong> Umrechnung von 2D-Koordinaten in ein <strong>lineares
+                            1D-Array</strong> für effizienteren Speicherzugriff (Cache Locality).</li>
+                    <li><strong>Vektor-Rendering:</strong> Zeichnung über <code>ctx.moveTo/lineTo</code> statt einfacher
+                        Rechtecke für scharfe Darstellung.</li>
+                </ul>
             </div>
             <div class="visual-panel">
                 <div class="code-panel">
@@ -223,26 +229,135 @@ RULE 2: Select USE-TOUCH-BUTTONS-METHOD if no keyboard is available
                         <div class="dot green"></div>
                     </div>
                     <pre><code class="language-javascript">
-// src/components/Maze.jsx
+function Cell(i, j, size, cols, rows) {
+  // 1. Initialisierung: Logische Koordinaten & Physische Position
+  this.i = i;
+  this.j = j;
+  this.x = i * size; // Optimierung: Koordinaten nur einmal berechnen
+  this.y = j * size;
+  this.cols = cols;
+  this.rows = rows;
 
-function bfs(startCell, cells) {
-  // Distanzen zurücksetzen
-  for (let cell of cells) {
-    cell.distanceToStart = Infinity;
-    cell.isExit = false;
+  // 2. Graph-Topologie
+  // walls = [Oben, Rechts, Unten, Links] -> true = Wand, false = Weg
+  this.walls = [true, true, true, true];
+  
+  // 3. Status für Algorithmen (DFS & BFS)
+  this.visited = false;
+  this.distanceToStart = Infinity;
+
+  // Methode: Rendering auf dem Canvas (Vektorgrafik)
+  this.draw = function (ctx) {
+    ctx.beginPath(); 
+    // Nur aktive Wände werden gezeichnet
+    if (this.walls[0]) { ctx.moveTo(x, y); ctx.lineTo(x + size, y); }           
+    if (this.walls[1]) { ctx.moveTo(x + size, y); ctx.lineTo(x + size, y + size); } 
+    // ... usw.
+    ctx.stroke();
+  };
+
+  // Methode: Nachbarn finden (für Graph-Traversierung)
+  this.checkNeighbors = function (cells) {
+    const neighbors = [];
+
+    // Umrechnung von 2D (Grid) zu 1D (Array Speicher)
+    const idx = (c, r) => index(c, r, this.cols, this.rows);
+
+    // Zugriff auf potenzielle Nachbarn im 1D-Array
+    const top = cells[idx(this.i, this.j - 1)];
+    const right = cells[idx(this.i + 1, this.j)];
+    // ...
+    
+    // Validierung: Existiert die Zelle und wurde sie noch nicht besucht?
+    if (top && !top.visited) neighbors.push(top);
+    // ...
+    
+    // Rückgabe eines zufälligen Nachbarn (für Random Walk)
+    return neighbors[Math.floor(Math.random() * neighbors.length)];
+  };
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-panel">
+                <h1>2. Generierung: Iteratives Backtracking</h1>
+                <p>Wir verwenden einen <strong>Stack-basierten DFS (Depth First Search)</strong> Algorithmus, bekannt
+                    als "Recursive Backtracker".</p>
+                <p>Der Algorithmus gräbt sich durch das Raster, bis er stecken bleibt, und kehrt dann über den
+                    <code>Stack</code> zurück (Backtracking), um neue Wege zu finden. Dies garantiert ein
+                    <strong>perfektes Labyrinth</strong> (genau ein Pfad zwischen zwei Punkten, keine Schleifen).</p>
+            </div>
+            <div class="visual-panel">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <pre><code class="language-javascript">
+// Generierungs-Loop (Iteratives Backtracking)
+if (localCurrent) {
+  // 1. Suche nach einem unbesuchten Nachbarn
+  const next = localCurrent.checkNeighbors(localCells);
+
+  if (next) {
+    next.visited = true;
+    
+    // 2. Aktuelle Position auf den Stack pushen (für den Rückweg)
+    localStack.push(localCurrent);
+    
+    // 3. Wand zwischen aktueller und nächster Zelle entfernen
+    removeWalls(localCurrent, next);
+    
+    // 4. Zeiger bewegen
+    localCurrent = next;
+
+  } else if (localStack.length > 0) {
+    // 5. Sackgasse erreicht! Backtracking via Stack
+    localCurrent = localStack.pop();
   }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-panel">
+                <h1>3. Zielfindung: BFS Algorithmus</h1>
+                <p>Um das Spiel herausfordernd zu machen, setzen wir das Ziel nicht zufällig.</p>
+                <p>Wir nutzen eine <strong>Breitensuche (BFS)</strong>, um das Labyrinth vom Startpunkt aus zu "fluten".
+                    Wir berechnen die Distanz (Kosten) zu jeder Zelle. Die Zelle mit dem maximalen Wert wird der Exit.
+                </p>
+                <p><em>Technischer Hinweis:</em> Wir nutzen eine <code>Queue</code> (FIFO) statt eines Stacks.</p>
+            </div>
+            <div class="visual-panel">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <pre><code class="language-javascript">
+function bfs(startCell, cells) {
+  // Queue für Breitensuche (FIFO - First In, First Out)
   const queue = [startCell];
-  const localVisited = new Set([startCell]);
   startCell.distanceToStart = 0;
 
   while (queue.length > 0) {
+    // Das älteste Element aus der Schlange nehmen
     const currentCell = queue.shift();
-    // findNeighborsBFS gibt erreichbare Nachbarn zurück 
-    // (ohne Wände dazwischen)
+
+    // Nachbarn iterieren (nur die ohne Wände dazwischen)
     for (let neighbor of findNeighborsBFS(currentCell, cells)) {
       if (!localVisited.has(neighbor)) {
         localVisited.add(neighbor);
         queue.push(neighbor);
+        
+        // Die Distanz erhöht sich um 1 Schritt (Kostenfunktion)
         neighbor.distanceToStart = currentCell.distanceToStart + 1;
       }
     }
@@ -250,11 +365,9 @@ function bfs(startCell, cells) {
 }
 
 function findLongestPath(cells) {
-  let maxDistance = -1;
-  let exitCell = null;
+  // Lineare Suche nach dem Maximum (O(n))
   for (let cell of cells) {
-    if (cell.distanceToStart !== Infinity && 
-        cell.distanceToStart > maxDistance) {
+    if (cell.distanceToStart > maxDistance) {
       maxDistance = cell.distanceToStart;
       exitCell = cell;
     }
@@ -268,11 +381,11 @@ function findLongestPath(cells) {
 
         <div class="slide">
             <div class="content-panel">
-                <h1>2. Generierung: Backtracking</h1>
-                <p>Das Herzstück der Labyrinth-Erstellung. Wir verwenden <strong>Iteratives Backtracking</strong> mit
-                    einem Stack.</p>
-                <p>Der Algorithmus besucht eine Zelle, wählt einen zufälligen Nachbarn, durchbricht die Wand und rückt
-                    vor. Wenn es keine Nachbarn gibt, geht er zurück (Stack Pop), bis ein neuer Weg gefunden wird.</p>
+                <h1>4. Player & State Management</h1>
+                <p>Die <code>Player</code> Klasse fungiert als kleine <strong>State Machine</strong>.</p>
+                <p>Wir entkoppeln die logische Position (Grid-Index) von der visuellen Position (Pixel). Während die
+                    Logik sofort aktualisiert wird, nutzt das Rendering eine <strong>lineare Interpolation</strong> für
+                    flüssige Bewegungen.</p>
             </div>
             <div class="visual-panel">
                 <div class="code-panel">
@@ -282,124 +395,34 @@ function findLongestPath(cells) {
                         <div class="dot green"></div>
                     </div>
                     <pre><code class="language-javascript">
-// src/components/Maze.jsx (innerhalb der Animationsschleife)
-
-// DFS-Algorithmus (Backtracking)
-if (localCurrent) {
-  const next = localCurrent.checkNeighbors(localCells);
-  if (next) {
-    next.visited = true;
-    
-    // Zum Stack hinzufügen für Rückweg
-    localStack.push(localCurrent);
-    
-    // Wände zwischen Zellen entfernen
-    removeWalls(localCurrent, next);
-    
-    // Zeiger bewegen
-    localCurrent = next;
-  } else if (localStack.length > 0) {
-    // Wenn keine Nachbarn, Backtracking
-    localCurrent = localStack.pop();
-  }
-}
-                    </code></pre>
-                </div>
-            </div>
-        </div>
-
-        <div class="slide">
-            <div class="content-panel">
-                <h1>3. Spielerlogik (Klasse Player)</h1>
-                <p>Die Klasse <code>Player</code> kapselt die Physik und die interpolierte Bewegung.</p>
-                <p>Hervorzuheben ist die Methode <code>update</code>, die <strong>easeOutSine</strong> für weiche
-                    Bewegungen nutzt, sowie eine "Bounce"-Logik für visuelles Feedback bei Kollisionen.</p>
-            </div>
-            <div class="visual-panel">
-                <div class="code-panel">
-                    <div class="code-header">
-                        <div class="dot red"></div>
-                        <div class="dot yellow"></div>
-                        <div class="dot green"></div>
-                    </div>
-                    <pre><code class="language-javascript">
-// src/components/Player.js
-
 export default class Player {
-  constructor(startCell, cellSize, options = {}) {
-    this.cellSize = cellSize;
+  constructor(startCell, cellSize) {
+    // Initialisierung der Position
     this.setPositionFromCell(startCell);
-    // ... Initialisierung von Zustandsvariablen
-  }
 
-  // update wird jeden Frame aufgerufen
-  update(dt) {
-    // Weiche Bewegung zwischen Positionen
-    if (this.progress < 1) {
-      this.elapsed += dt;
-      const t = Math.min(1, this.elapsed / this.moveDuration);
-      const eased = easeOutSine(t);
-      
-      // Lineare Interpolation
-      this.x = lerp(this.startPos.x, this.endPos.x, eased);
-      this.y = lerp(this.startPos.y, this.endPos.y, eased);
-      this.progress = t;
-    }
-
-    // Unabhängige Logik für Kollisionen
-    if (this.bouncing) {
-      // ... Berechnungen für visuellen Aufprall
-    }
-  }
-  
-  // ... Methoden moveTo, draw, etc.
-}
-                    </code></pre>
-                </div>
-            </div>
-        </div>
-
-        <div class="slide">
-            <div class="content-panel">
-                <h1>4. Klasse Zelle (Cell)</h1>
-                <p>Die fundamentale Einheit des Rasters.</p>
-                <p>Sie verwaltet Position, Zustand (visited, start, exit) und die <strong>4 Wände</strong>. Enthält auch
-                    die <code>checkNeighbors</code> Logik für die Zufallsgenerierung.</p>
-            </div>
-            <div class="visual-panel">
-                <div class="code-panel">
-                    <div class="code-header">
-                        <div class="dot red"></div>
-                        <div class="dot yellow"></div>
-                        <div class="dot green"></div>
-                    </div>
-                    <pre><code class="language-javascript">
-// src/components/Maze.jsx
-
-function Cell(i, j, size, cols, rows) {
-  this.i = i;
-  this.j = j;
-  this.walls = [true, true, true, true]; // [Oben, Rechts, Unten, Links]
-  this.visited = false;
-  
-  // Methode: Unbesuchte Nachbarn suchen
-  this.checkNeighbors = function (cells) {
-    const neighbors = [];
-    // ... Logik um Nachbarn zu finden
+    // State-Variablen für die Animation
+    this.startPos = { x: this.x, y: this.y }; // Wo war ich?
+    this.endPos = { x: this.x, y: this.y };   // Wo will ich hin?
     
-    // Gibt zufälligen Nachbarn zurück
-    if (neighbors.length > 0) {
-      return neighbors[Math.floor(Math.random() * neighbors.length)];
-    }
-    return undefined;
-  };
+    // Progress-Flag: 1 = Idle, 0 = Moving
+    this.progress = 1; 
+  }
 
-  this.draw = function (ctx) {
-    // Nur aktive Wände zeichnen
-    if (this.walls[0]) { ctx.moveTo(x, y); ctx.lineTo(x + size, y); } // Oben
-    if (this.walls[1]) { ctx.moveTo(x + size, y); ctx.lineTo(x + size, y + size); } // Rechts
-    // ... usw.
-  };
+  // Wird bei validem Input aufgerufen
+  moveTo(targetCell) {
+    // 1. Logischen Zustand aktualisieren (Start -> Ziel)
+    this.startPos = { x: this.x, y: this.y };
+    this.endPos = { 
+        x: targetCell.x + this.cellSize / 2, 
+        y: targetCell.y + this.cellSize / 2 
+    };
+    
+    // 2. Animation trigger (Reset Zeit)
+    this.elapsed = 0;
+    this.progress = 0; 
+  }
+  
+  // update(dt) { ... interpoliert zwischen startPos und endPos ... }
 }
                     </code></pre>
                 </div>
@@ -408,52 +431,17 @@ function Cell(i, j, size, cols, rows) {
 
         <div class="slide">
             <div class="content-panel">
-                <h1>5. Rendering & Optimierung</h1>
-                <p>Implementierung von <strong>Offscreen Canvas</strong> (Double Buffer).</p>
-                <p>Das statische Labyrinth wird nur EINMAL in den Speicher gezeichnet. In jedem Frame wird dieses Bild
-                    kopiert und nur der Spieler neu gezeichnet. Dies verbessert die Performance drastisch.</p>
-            </div>
-            <div class="visual-panel">
-                <div class="code-panel">
-                    <div class="code-header">
-                        <div class="dot red"></div>
-                        <div class="dot yellow"></div>
-                        <div class="dot green"></div>
-                    </div>
-                    <pre><code class="language-javascript">
-// src/components/Maze.jsx
+                <h1>5. Web Speech API Integration</h1>
+                <p>Verwendung der nativen Browser-Schnittstelle für Barrierefreiheit und Datenschutz (kein Server-Upload
+                    nötig).</p>
 
-const drawMazeToOffscreen = useCallback((cols, rows, cellsArray) => {
-  // ... Konfiguration des Offscreen-Canvas
-  
-  // Alle Zellen EINMAL zeichnen
-  for (const cell of cellsArray) {
-      cell.draw(offCtx);
-  }
-}, []);
-
-const redrawAll = useCallback(() => {
-  const ctx = ctxRef.current; // Sichtbares Canvas
-  
-  // Canvas leeren
-  ctx.clearRect(0, 0, width, height);
-  
-  // Statisches Bild kopieren
-  if (offscreenCanvasRef.current) {
-    ctx.drawImage(offscreenCanvasRef.current, 0, 0, width, height);
-  }
-}, []);
-                    </code></pre>
-                </div>
-            </div>
-        </div>
-
-        <div class="slide">
-            <div class="content-panel">
-                <h1>6. Sprachsteuerung (WebSpeech API)</h1>
-                <p>Integration der nativen Browser-API für Barrierefreiheit.</p>
-                <p>Konfiguriert für kontinuierliche Erkennung. Das <code>transcript</code> wird in Echtzeit erfasst und
-                    an den Befehlsprozessor gesendet.</p>
+                <h2>Wichtige Konfigurationen</h2>
+                <ul>
+                    <li><code>continuous = true</code>: Das Mikrofon bleibt offen und erlaubt Befehlsketten ("Hoch,
+                        Links, Hoch").</li>
+                    <li><code>interimResults = false</code>: Wir warten auf das finale Ergebnis für höhere Konfidenz und
+                        Präzision.</li>
+                </ul>
             </div>
             <div class="visual-panel">
                 <div class="code-panel">
@@ -465,17 +453,24 @@ const redrawAll = useCallback(() => {
                     <pre><code class="language-javascript">
 // src/hooks/useVoiceControl.js
 
-// Grundlegende Konfiguration
 const recognition = new SpeechRecognition();
-recognition.lang = lang;
-recognition.continuous = true;
+recognition.lang = lang; // 'de-DE'
+
+// Wichtig: Mikrofon bleibt aktiv für Befehlsketten
+recognition.continuous = true; 
+
+// False: Wir verarbeiten nur finalisierte Sätze (höhere Präzision)
 recognition.interimResults = false;
 
 recognition.onresult = (event) => {
+    // Zugriff auf den letzten vollständigen Satz
     const lastResult = event.results[event.results.length - 1];
-    const transcript = lastResult[0].transcript;
-    // Callback mit erkanntem Text
-    onResult({ transcript, confidence: lastResult[0].confidence });
+    
+    if (lastResult.isFinal) {
+        const transcript = lastResult[0].transcript.trim();
+        // Callback an die Game-Engine
+        onResult({ transcript, confidence: lastResult[0].confidence });
+    }
 };
                     </code></pre>
                 </div>
@@ -484,10 +479,10 @@ recognition.onresult = (event) => {
 
         <div class="slide">
             <div class="content-panel">
-                <h1>7. Interpretation (Regex)</h1>
-                <p>Verarbeitung natürlicher Sprache.</p>
-                <p>Wir nutzen <strong>Reguläre Ausdrücke</strong>, um Zahlen (z.B. "drei") und Befehle zu extrahieren.
-                    Ermöglicht komplexe Befehle wie "Drei mal oben".</p>
+                <h1>6. Natural Language Processing (Regex)</h1>
+                <p>Der Benutzer spricht natürlich (z.B. "Geh drei mal nach oben").</p>
+                <p>Wir nutzen <strong>Reguläre Ausdrücke (Regex)</strong>, um Quantifizierer (Zahlen) und Aktionen
+                    (Richtungen) zu extrahieren und in eine Befehls-Queue umzuwandeln.</p>
             </div>
             <div class="visual-panel">
                 <div class="code-panel">
@@ -499,25 +494,72 @@ recognition.onresult = (event) => {
                     <pre><code class="language-javascript">
 // src/utils/voiceCommandsMap.js
 
-export function interpretSequence(transcript = "") {
-    // Zahlen und Befehle erkennen
-    const numMatch = part.match(/\b(\d+|uno|dos|three|four...)\b/);
+export function interpretSequence(transcript) {
+    const out = [];
     
-    // Wenn Zahl, Wiederholungen setzen
-    if (numMatch) repeat = parseNumberToken(numMatch[1]) || 1;
+    // Regex: Sucht nach Zahlen (Ziffern oder Wörter)
+    // z.B. Match bei "drei", "3", "zwei mal"
+    const numMatch = transcript.match(/\b(\d+|ein|zwei|drei...)\b/);
+    
+    // Parser: Wandelt Text-Zahl in Integer um (Default: 1)
+    let repeat = numMatch ? parseNumber(numMatch[0]) : 1;
 
-    // Nach Richtungswörtern suchen
-    for (const w of words) {
-        const cmd = interpretVoiceCommand(w); // Gibt "UP", "DOWN" usw.
-        if (cmd) found.push(cmd);
+    // Regex: Sucht nach Richtungs-Keywords
+    const cmd = interpretVoiceCommand(transcript); // -> "UP"
+    
+    // Befehl vervielfachen (Command Queue Pattern)
+    for (let r = 0; r < repeat; r++) {
+        out.push(cmd); // ["UP", "UP", "UP"]
     }
     
-    // Befehle vervielfachen
-    for (let r = 0; r < repeat; r++) {
-        out.push(...found);
-    }
     return out;
 }
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-panel">
+                <h1>7. Performance: Double Buffering</h1>
+                <p>Da das Labyrinth aus hunderten Linien besteht, wäre ein Neuzeichnen in jedem Frame (60 FPS) zu teuer.
+                </p>
+                <p><strong>Lösung: OffscreenCanvas.</strong> Wir zeichnen das statische Labyrinth einmalig in den
+                    Speicher und kopieren es dann als Bild (Bit-Blit) in jedem Frame. Nur der Spieler wird neu
+                    berechnet.</p>
+            </div>
+            <div class="visual-panel">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <pre><code class="language-javascript">
+// 1. Rendering des statischen Labyrinths in den Speicher (Memoized)
+const drawMazeToOffscreen = useCallback((cells) => {
+  if (!offscreenCanvasRef.current) return;
+  const offCtx = offscreenCanvasRef.current.getContext("2d");
+  
+  // Teure Operation: Hunderte von Wänden zeichnen
+  // Passiert nur 1x bei Generierung oder Resize!
+  for (const cell of cells) {
+      cell.draw(offCtx);
+  }
+}, []);
+
+// 2. Render-Loop (60 FPS)
+const redrawAll = useCallback(() => {
+  const ctx = ctxRef.current;
+  
+  // Canvas leeren
+  ctx.clearRect(0, 0, width, height);
+  
+  // Kopieren des statischen Bildes aus dem Speicher (Sehr schnell)
+  if (offscreenCanvasRef.current) {
+    ctx.drawImage(offscreenCanvasRef.current, 0, 0);
+  }
+}, []);
                     </code></pre>
                 </div>
             </div>
@@ -538,8 +580,8 @@ export function interpretSequence(transcript = "") {
                 </ol>
 
                 <p style="margin-top:20px; color:var(--accent);">Nehmen Sie an der Umfrage teil:</p>
-                <a href="https://forms.gle/rvwf2fAKFqTZm2nk6" class="btn-primary" <i class="fas fa-poll-h"></i> Zur
-                    Umfrage
+                <a href="https://forms.gle/rvwf2fAKFqTZm2nk6" class="btn-primary">
+                    <i class="fas fa-poll-h"></i> Zur Umfrage
                 </a>
             </div>
             <div class="visual-panel">
@@ -560,6 +602,10 @@ export function interpretSequence(transcript = "") {
                 <a href="https://lenis-jf.github.io/voice-controlled-maze/" target="_blank" class="btn-primary">
                     <i class="fas fa-play"></i> Jetzt Spielen
                 </a>
+
+                <a href="https://github.com/Lenis-jf/voice-controlled-maze" target="_blank" class="btn-secondary">
+                    <i class="fab fa-github"></i> Github Repository
+                </a>
             </div>
             <div class="visual-panel">
                 <div class="qr-panel">
@@ -572,10 +618,6 @@ export function interpretSequence(transcript = "") {
 
         <div class="slide-counter">Folie <span id="current">1</span> / <span id="total">14</span></div>
 
-        <!-- <div class="controls">
-            <button class="nav-btn" onclick="prevSlide()">← Zurück</button>
-            <button class="nav-btn" onclick="nextSlide()">Weiter →</button>
-        </div> -->
     </div>
 
     <div class="controls">
@@ -583,7 +625,6 @@ export function interpretSequence(transcript = "") {
         <button class="nav-btn" onclick="nextSlide()">Weiter →</button>
     </div>
 
-    <!-- Slide Navigation Menu -->
     <div class="menu-toggle" id="menuToggle">
         <i class="fas fa-th-large"></i>
     </div>
@@ -594,7 +635,6 @@ export function interpretSequence(transcript = "") {
             <button class="close-menu" id="closeMenu"><i class="fas fa-times"></i></button>
         </div>
         <div class="menu-items-container" id="menuItemsContainer">
-            <!-- Items injected by JS -->
         </div>
     </div>
 
