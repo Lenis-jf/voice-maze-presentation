@@ -27,6 +27,7 @@ body {
     font-family: 'Inter', sans-serif;
     height: 100vh;
     overflow: hidden;
+    overflow-y: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -635,7 +636,7 @@ pre::-webkit-scrollbar-corner {
 }
 
 .slide-nav-menu {
-    position: absolute;
+    position: fixed;
     bottom: -300px; /* Hidden initially */
     left: 0;
     width: 100%;
