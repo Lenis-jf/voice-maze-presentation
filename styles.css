@@ -30,10 +30,11 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    perspective: 1000px;
+    /* perspective: 1000px;  <-- REMOVED from body to fix position:fixed context */
 }
 
 .presentation-container {
+    perspective: 1000px; /* Moved here to keep 3D effects on slides */
     width: 95%;
     max-width: 1600px;
     height: 90vh;
