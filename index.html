@@ -100,7 +100,8 @@
 
                 <h2>Frontend: React.js</h2>
                 <p>Da die Webanwendung stark von konstantem I/O und schnellen Status-Updates abhängt, haben wir uns für
-                    <strong>React.js</strong> entschieden.</p>
+                    <strong>React.js</strong> entschieden.
+                </p>
 
                 <h2>Styling: SCSS</h2>
                 <p>Für das Design nutzen wir <strong>SCSS</strong> für ein modulares und strukturiertes Styling.</p>
@@ -137,6 +138,69 @@
                         <span>GitHub Pages</span>
                     </li>
                 </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-panel">
+                <h1>GOMS-CMN Analyse</h1>
+                <p>Modellierung der Benutzerinteraktion für die Aufgabe "Labyrinth lösen".</p>
+
+                <h2>Goals & Methods</h2>
+                <ul>
+                    <li><strong>GOAL:</strong> Solve Maze</li>
+                    <li><strong>METHOD 1:</strong> Use Voice Control (Say "Up", "Down")</li>
+                    <li><strong>METHOD 2:</strong> Use Keyboard (WASD / Arrows)</li>
+                    <li><strong>METHOD 3:</strong> Use Touch Buttons</li>
+                </ul>
+
+                <h2>Selection Rules (Beispiel)</h2>
+                <p><em>RULE 1:</em> Select USE-KEYBOARD if no microphone is available.<br>
+                    <em>RULE 2:</em> Select USE-TOUCH if mobile device is detected.
+                </p>
+            </div>
+            <div class="visual-panel">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <pre><code class="language-javascript">
+GOMS-CMN
+GOAL: 	Solve a maze
+.		[select		GOAL:		USE-VOICE-CONTROL-METHOD
+.		.			GOAL:		USE-KEYBOARD-KEYS-METHOD
+.		.			GOAL:		USE-TOUCH-BUTTONS]
+                
+GOAL:		USE-VOICE-CONTROL-METHOD
+.		.		.		GOAL: GENERATE-MAZE
+.		.		.		                    MOVE-MOUSE-TO-GENERATE-MAZE-BUTTON
+.		.		.				  CLICK-LEFT-MOUSE-BUTTON
+.		.		.		GOAL: ENABLE-VOICE-CONTROL
+.		.		.				MOVE-MOUSE-TO-MICROPHONE-BUTTON
+.		.		.				CLICK-LEFT-MOUSE-BUTTON
+.		.		.		GOAL: SOLVE-MAZE-USING-VOICE-CONTROL
+.		.		.				SAY-VOICE-COMMAND(’UP’/’DOWN’/’RIGHT’/’LEFT’)
+.		.		.				REACH-THE-END-USING-VOICE-COMMANDS
+                
+GOAL:		USE-KEYBOARD-KEYS-METHOD
+.		.		.		GOAL: GENERATE-MAZE
+.		.		.			MOVE-MOUSE-TO-GENERATE-MAZE-BUTTON
+.		.		.			CLICK-LEFT-MOUSE-BUTTON
+.		.		.		GOAL: NAVIGATE-MAZE-USING- KEYBOARD-KEYS-
+.		.		.			PRESS-KEYBOARD-KEYS(“W”/”S”/”A”/”D”)
+.		.		.			REACH-THE-END-USING-KEYBOARD-KEYS
+GOAL:		USE-TOUCH-BUTTONS-METHOD
+.		.		.		GOAL:GENERATE-MAZE
+.		.		.			PRESS-GENERATE-MAZE-BUTTON-WITH-FINGER
+.		.		.		GOAL:NAVIGATE-MAZE-USING-TOUCH-SCREEN
+.		.		.			PRESS-ARROW-BUTTONS-TO-NAVIGATE-USING-FINGER-ON-SCREEN
+.		.		.			REACH-THE-END.
+RULE 1: Select USE-KEYBOARD-KEYS-METHOD if no microphone is available
+RULE 2: Select USE-TOUCH-BUTTONS-METHOD if no keyboard is available
+                            </code></pre>
+                </div>
             </div>
         </div>
 
@@ -459,45 +523,6 @@ export function interpretSequence(transcript = "") {
 
         <div class="slide">
             <div class="content-panel">
-                <h1>GOMS-CMN Analyse</h1>
-                <p>Modellierung der Benutzerinteraktion für die Aufgabe "Labyrinth lösen".</p>
-
-                <h2>Goals & Methods</h2>
-                <ul>
-                    <li><strong>GOAL:</strong> Solve Maze</li>
-                    <li><strong>METHOD 1:</strong> Use Voice Control (Say "Up", "Down")</li>
-                    <li><strong>METHOD 2:</strong> Use Keyboard (WASD / Arrows)</li>
-                    <li><strong>METHOD 3:</strong> Use Touch Buttons</li>
-                </ul>
-
-                <h2>Selection Rules (Beispiel)</h2>
-                <p><em>RULE 1:</em> Select USE-KEYBOARD if no microphone is available.<br>
-                    <em>RULE 2:</em> Select USE-TOUCH if mobile device is detected.
-                </p>
-            </div>
-            <div class="visual-panel">
-                <div class="code-panel">
-                    <div class="code-header">
-                        <div class="dot red"></div>
-                        <div class="dot yellow"></div>
-                        <div class="dot green"></div>
-                    </div>
-                    <pre><code class="language-javascript">
-GOAL: SOLVE-MAZE-USING-VOICE-CONTROL
-    GOAL: ENABLE-VOICE-CONTROL
-        MOVE-MOUSE-TO-MICROPHONE-BUTTON
-        CLICK-LEFT-MOUSE-BUTTON
-    GOAL: NAVIGATE
-        SAY-VOICE-COMMAND('UP'/'DOWN'/'RIGHT'/'LEFT')
-        VERIFY-MOVEMENT-FEEDBACK
-        REPEAT-UNTIL-EXIT
-                    </code></pre>
-                </div>
-            </div>
-        </div>
-
-        <div class="slide">
-            <div class="content-panel">
                 <h1>Geplante Evaluierung & User Testing</h1>
                 <p>Wir planen eine quantitative Umfrage, um das System zu validieren.</p>
 
@@ -511,8 +536,8 @@ GOAL: SOLVE-MAZE-USING-VOICE-CONTROL
                 </ol>
 
                 <p style="margin-top:20px; color:var(--accent);">Nehmen Sie an der Umfrage teil:</p>
-                <a href="https://forms.gle/rvwf2fAKFqTZm2nk6" class="btn-primary"
-                    <i class="fas fa-poll-h"></i> Zur Umfrage
+                <a href="https://forms.gle/rvwf2fAKFqTZm2nk6" class="btn-primary" <i class="fas fa-poll-h"></i> Zur
+                    Umfrage
                 </a>
             </div>
             <div class="visual-panel">

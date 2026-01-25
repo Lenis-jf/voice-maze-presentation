@@ -1,7 +1,7 @@
 :root {
     --bg-color: #0a0f1d;
     --accent: #00e1ff;
-    --accent-hover: #00b8d4;
+    --accent-hover: rgba(0, 184, 212, 0.9);
     --text: #e2e8f0;
     --text-muted: #94a3b8;
     --glass-bg: rgba(20, 25, 40, 0.75);
@@ -216,6 +216,31 @@ pre {
     font-family: 'Fira Code', monospace !important;
     font-size: 0.9rem;
     line-height: 1.5 !important;
+    background-color: #1a1a1a !important; /* IDE style background */
+    color: #e2e8f0 !important; /* Ensure text is visible */
+}
+
+/* Custom Scrollbar for Code Panel */
+pre::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+pre::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+pre::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+pre::-webkit-scrollbar-corner {
+    background: transparent;
 }
 
 /* --- LISTA DE TECNOLOGÍAS --- */
@@ -339,10 +364,11 @@ pre {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    backdrop-filter: blur(3px);
 }
 
 .nav-btn:hover {
-    background: var(--accent);
+    background: var(--accent-hover);
     color: var(--bg-color);
 }
 
@@ -439,13 +465,29 @@ pre {
 
     .code-panel {
         height: auto;
+        max-height: 80vh;
         min-height: 300px;
+        position: relative;
+    }
+
+    /* Mobile-only scroll hint mask */
+    .code-panel::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 80px;
+        background: linear-gradient(to bottom, transparent, #1a1a1a);
+        pointer-events: none;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
     }
 
     pre {
         font-size: 0.95rem !important;
         line-height: 1.6 !important;
-        padding: 1rem !important;
+        padding: 1rem 1rem 6rem 1rem !important; /* Extra bottom padding to clear the mask */
         white-space: pre-wrap;
     }
 
