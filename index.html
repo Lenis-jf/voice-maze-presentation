@@ -157,8 +157,10 @@
                 </ul>
 
                 <h2>Selection Rules (Beispiel)</h2>
-                <p><em>RULE 1:</em> Select USE-KEYBOARD if no microphone is available.<br>
-                    <em>RULE 2:</em> Select USE-TOUCH if mobile device is detected.
+                <p>
+                    <em>RULE 1:</em> Select USE-KEYBOARD-KEYS-METHOD to use keyboard keys.<br>
+                    <em>RULE 2:</em> Select USE-TOUCH-BUTTONS-METHOD to use touch controls.<br>
+                    <em>RULE 3:</em> Select USE-VOICE-CONTROL-METHOD to use voice controls.
                 </p>
             </div>
             <div class="visual-panel">
@@ -170,37 +172,38 @@
                     </div>
                     <pre><code class="language-javascript">
 GOMS-CMN
-GOAL:   Solve a maze
-.       [select     GOAL:       USE-VOICE-CONTROL-METHOD
-.       .           GOAL:       USE-KEYBOARD-KEYS-METHOD
-.       .           GOAL:       USE-TOUCH-BUTTONS]
+GOAL: 	Solve a maze
+.		[select		GOAL:		USE-VOICE-CONTROL-METHOD
+.		.			GOAL:		USE-KEYBOARD-KEYS-METHOD
+.		.			GOAL:		USE-TOUCH-BUTTONS]
                 
-GOAL:       USE-VOICE-CONTROL-METHOD
-.       .       .       GOAL: GENERATE-MAZE
-.       .       .                           MOVE-MOUSE-TO-GENERATE-MAZE-BUTTON
-.       .       .                 CLICK-LEFT-MOUSE-BUTTON
-.       .       .       GOAL: ENABLE-VOICE-CONTROL
-.       .       .               MOVE-MOUSE-TO-MICROPHONE-BUTTON
-.       .       .               CLICK-LEFT-MOUSE-BUTTON
-.       .       .       GOAL: SOLVE-MAZE-USING-VOICE-CONTROL
-.       .       .               SAY-VOICE-COMMAND(’UP’/’DOWN’/’RIGHT’/’LEFT’)
-.       .       .               REACH-THE-END-USING-VOICE-COMMANDS
+GOAL:		USE-VOICE-CONTROL-METHOD
+.		.		.		GOAL: GENERATE-MAZE
+.		.		.		                    MOVE-MOUSE-TO-GENERATE-MAZE-BUTTON
+.		.		.				  CLICK-LEFT-MOUSE-BUTTON
+.		.		.		GOAL: ENABLE-VOICE-CONTROL
+.		.		.				MOVE-MOUSE-TO-MICROPHONE-BUTTON
+.		.		.				CLICK-LEFT-MOUSE-BUTTON
+.		.		.		GOAL: SOLVE-MAZE-USING-VOICE-CONTROL
+.		.		.				SAY-VOICE-COMMAND(’UP’/’DOWN’/’RIGHT’/’LEFT’)
+.		.		.				REACH-THE-END-USING-VOICE-COMMANDS
                 
-GOAL:       USE-KEYBOARD-KEYS-METHOD
-.       .       .       GOAL: GENERATE-MAZE
-.       .       .           MOVE-MOUSE-TO-GENERATE-MAZE-BUTTON
-.       .       .           CLICK-LEFT-MOUSE-BUTTON
-.       .       .       GOAL: NAVIGATE-MAZE-USING- KEYBOARD-KEYS-
-.       .       .           PRESS-KEYBOARD-KEYS(“W”/”S”/”A”/”D”)
-.       .       .           REACH-THE-END-USING-KEYBOARD-KEYS
-GOAL:       USE-TOUCH-BUTTONS-METHOD
-.       .       .       GOAL:GENERATE-MAZE
-.       .       .           PRESS-GENERATE-MAZE-BUTTON-WITH-FINGER
-.       .       .       GOAL:NAVIGATE-MAZE-USING-TOUCH-SCREEN
-.       .       .           PRESS-ARROW-BUTTONS-TO-NAVIGATE-USING-FINGER-ON-SCREEN
-.       .       .           REACH-THE-END.
-RULE 1: Select USE-KEYBOARD-KEYS-METHOD if no microphone is available
-RULE 2: Select USE-TOUCH-BUTTONS-METHOD if no keyboard is available
+GOAL:		USE-KEYBOARD-KEYS-METHOD
+.		.		.		GOAL: GENERATE-MAZE
+.		.		.			MOVE-MOUSE-TO-GENERATE-MAZE-BUTTON
+.		.		.			CLICK-LEFT-MOUSE-BUTTON
+.		.		.		GOAL: NAVIGATE-MAZE-USING- KEYBOARD-KEYS-
+.		.		.			PRESS-KEYBOARD-KEYS(“W”/”S”/”A”/”D”)
+.		.		.			REACH-THE-END-USING-KEYBOARD-KEYS
+GOAL:		USE-TOUCH-BUTTONS-METHOD
+.		.		.		GOAL:GENERATE-MAZE
+.		.		.			PRESS-GENERATE-MAZE-BUTTON-WITH-FINGER
+.		.		.		GOAL:NAVIGATE-MAZE-USING-TOUCH-SCREEN
+.		.		.			PRESS-ARROW-BUTTONS-TO-NAVIGATE-USING-FINGER-ON-SCREEN
+.		.		.			REACH-THE-END.
+RULE 1: Select USE-KEYBOARD-KEYS-METHOD to use keyboard keys
+RULE 2: Select USE-TOUCH-BUTTONS-METHOD to use touch controls
+RULE 3: Select USE-VOICE-CONTROL-METHOD to use voice controls
                             </code></pre>
                 </div>
             </div>
@@ -345,6 +348,8 @@ if (localCurrent) {
 function bfs(startCell, cells) {
   // Queue für Breitensuche (FIFO - First In, First Out)
   const queue = [startCell];
+  const localVisited = new Set([startCell]);
+
   startCell.distanceToStart = 0;
 
   while (queue.length > 0) {
@@ -453,25 +458,45 @@ export default class Player {
                     <pre><code class="language-javascript">
 // src/hooks/useVoiceControl.js
 
-const recognition = new SpeechRecognition();
-recognition.lang = lang; // 'de-DE'
-
-// Wichtig: Mikrofon bleibt aktiv für Befehlsketten
-recognition.continuous = true; 
-
-// False: Wir verarbeiten nur finalisierte Sätze (höhere Präzision)
-recognition.interimResults = false;
-
-recognition.onresult = (event) => {
-    // Zugriff auf den letzten vollständigen Satz
-    const lastResult = event.results[event.results.length - 1];
-    
-    if (lastResult.isFinal) {
-        const transcript = lastResult[0].transcript.trim();
-        // Callback an die Game-Engine
-        onResult({ transcript, confidence: lastResult[0].confidence });
+useEffect(() => {
+    // 1. Verfügbarkeit prüfen (Cross-Browser Support)
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        console.warn("API not supported");
+        return;
     }
-};
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true; 
+    recognition.interimResults = false;
+
+    // 2. Ergebnis-Verarbeitungsschleife
+    recognition.onresult = (event) => {
+        // Iteration über den Result-Buffer (verhindert Datenverlust)
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            const result = event.results[i];
+            
+            // Nur finalisierte Ergebnisse verarbeiten
+            if (result.isFinal) {
+                const transcript = result[0].transcript.trim();
+                onResult({ transcript, confidence: result[0].confidence });
+            }
+        }
+    };
+
+    // 3. Fehlerbehandlung & Sicherheit
+    recognition.onerror = (event) => {
+        if (event.error === 'not-allowed') setIsListening(false);
+    };
+
+    // 4. Keep-Alive Logik (Auto-Restart)
+    recognition.onend = () => {
+        // Wenn wir noch zuhören sollen, starten wir die Engine neu
+        if(isListeningRef.current) {
+            try { recognition.start(); } catch(e) { /* ignore */ }
+        }
+    };
+}, []);
                     </code></pre>
                 </div>
             </div>
@@ -494,24 +519,40 @@ recognition.onresult = (event) => {
                     <pre><code class="language-javascript">
 // src/utils/voiceCommandsMap.js
 
-export function interpretSequence(transcript) {
-    const out = [];
+// 1. Multilinguale Mustererkennung
+// \b = Wortgrenze (Word Boundary), | = ODER
+function interpretVoiceCommand(word) {
+    const t = word.toLowerCase().trim();
     
-    // Regex: Sucht nach Zahlen (Ziffern oder Wörter)
-    // z.B. Match bei "drei", "3", "zwei mal"
-    const numMatch = transcript.match(/\b(\d+|ein|zwei|drei...)\b/);
+    // Erkennt: "arriba", "up", "oben", "hoch"...
+    if (/\b(subir|arriba|up|oben|hoch)\b/.test(t)) return "UP";
     
-    // Parser: Wandelt Text-Zahl in Integer um (Default: 1)
-    let repeat = numMatch ? parseNumber(numMatch[0]) : 1;
+    // Erkennt: "bajar", "down", "unten", "runter"...
+    if (/\b(bajar|abajo|down|unten|runter)\b/.test(t)) return "DOWN";
+    
+    // ... (Logik für Left/Right/Reset)
+    return null;
+}
 
-    // Regex: Sucht nach Richtungs-Keywords
-    const cmd = interpretVoiceCommand(transcript); // -> "UP"
+export function interpretSequence(transcript) {
+    // 2. Normalisierung: Konjunktionen ("und", "y") durch Kommas ersetzen
+    const normalized = transcript.replace(/\s+(y|und|and)\s+/g, ",");
     
-    // Befehl vervielfachen (Command Queue Pattern)
-    for (let r = 0; r < repeat; r++) {
-        out.push(cmd); // ["UP", "UP", "UP"]
+    // String in einzelne Befehlssegmente splitten
+    const parts = normalized.split(/[,;]+/).map(s => s.trim());
+    const out = [];
+
+    for (const part of parts) {
+        // 3. Extraktion von Quantifizierern (Zahlen oder Wörter)
+        const numMatch = part.match(/\b(\d+|uno|two|drei...)\b/);
+        let repeat = numMatch ? parseNumberToken(numMatch[1]) : 1;
+
+        // Befehle vervielfachen (Command Pattern)
+        const cmd = interpretVoiceCommand(part);
+        if (cmd) {
+            for (let r = 0; r < repeat; r++) out.push(cmd);
+        }
     }
-    
     return out;
 }
                     </code></pre>
