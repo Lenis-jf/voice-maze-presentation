@@ -518,6 +518,10 @@ pre::-webkit-scrollbar-corner {
         overflow: visible;
     }
 
+    .content-panel.goms {
+        padding-top: 100px; 
+    }
+
     .visual-panel {
         /* min-height: 50vh; */
         margin-top: 20px;
@@ -642,7 +646,8 @@ pre::-webkit-scrollbar-corner {
     /* Asegurar que el contenido se vea */
     .code-panel,
     .visual-panel,
-    .content-panel {
+    .content-panel,
+    .screenshot-panel img {
         height: auto !important;
         overflow: visible !important;
         display: block !important;
@@ -657,6 +662,14 @@ pre::-webkit-scrollbar-corner {
     .slide.split-content,
     .slide {
         grid-template-columns: 1fr !important;
+    }
+
+    .menu-toggle {
+        display: none !important;
+    }
+
+    .slide-nav-menu {
+        display: none !important;
     }
 }
 /* --- SLIDE NAVIGATION MENU (Liquid Glass) --- */
