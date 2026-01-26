@@ -519,7 +519,7 @@ pre::-webkit-scrollbar-corner {
     }
 
     .content-panel.goms {
-        padding-top: 100px; 
+        padding-top: clamp(20px, 10vh, 80px); 
     }
 
     .visual-panel {
