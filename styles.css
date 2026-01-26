@@ -97,6 +97,10 @@ body {
     padding: 15px 10px 0 0;
 }
 
+.content-panel.goms {
+    padding-top: 200px;
+}
+
 .content-panel::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -148,6 +152,12 @@ li {
 ul {
     list-style-position: inside;
     margin-bottom: 1rem;
+}
+
+ol {
+    list-style-position: inside;
+    margin-bottom: 1rem;
+    padding-left: 1.2rem;
 }
 
 strong {
