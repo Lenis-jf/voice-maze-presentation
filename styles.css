@@ -594,7 +594,6 @@ pre::-webkit-scrollbar-corner {
 
 /* --- AJUSTES PARA EXPORTAR A PDF (CORREGIDO) --- */
 @media print {
-
     html,
     body {
         height: auto !important;
@@ -607,67 +606,119 @@ pre::-webkit-scrollbar-corner {
 
     .presentation-container {
         position: static !important;
-        height: auto !important;
         width: 100% !important;
+        height: auto !important;
         max-width: none !important;
         overflow: visible !important;
         transform: none !important;
         display: block !important;
-        /* Importante para que fluyan */
     }
 
+    /* --- SLIDE LAYOUT --- */
     .slide {
-        display: block !important;
-        /* Cambiado a block para evitar problemas de grid al imprimir */
         position: relative !important;
+        display: block !important;
+        width: 100% !important;
+        height: auto !important; /* Permite que el slide crezca si el contenido es largo */
+        min-height: 100vh !important; /* Asegura que ocupe al menos una página */
+        page-break-after: always !important; /* Fuerza salto de página después de cada slide */
+        break-after: page !important;
+        margin: 0 !important;
+        padding: 40px !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: none !important;
         opacity: 1 !important;
         visibility: visible !important;
         top: auto !important;
         left: auto !important;
         transform: none !important;
-        width: 100% !important;
-        height: 100vh !important;
-        page-break-after: always !important;
-        break-after: page !important;
-        margin: 0 !important;
-        box-shadow: none !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        padding: 40px !important;
-        /* Padding extra para impresión */
-    }
-
-    /* Ocultar la interfaz */
-    .controls,
-    .nav-btn,
-    .slide-counter {
-        display: none !important;
-    }
-
-    /* Asegurar que el contenido se vea */
-    .code-panel,
-    .visual-panel,
-    .content-panel,
-    .screenshot-panel img {
-        height: auto !important;
-        overflow: visible !important;
-        display: block !important;
-    }
-
-    pre {
-        white-space: pre-wrap !important;
+        background-color: #0a0f1d !important;
+        color: #e2e8f0 !important;
         overflow: visible !important;
     }
-
-    /* Asegurar que el contenido dividido se muestre uno tras otro */
+    
+    /* Ensure content stacks */
     .slide.split-content,
     .slide {
         grid-template-columns: 1fr !important;
     }
 
-    .menu-toggle {
-        display: none !important;
+    /* Panels */
+    .content-panel, 
+    .visual-panel {
+        width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        overflow: visible !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    .content-panel.goms {
+        padding-top: 0 !important; /* Fix padding issue */
     }
 
+    /* Typography adjustments for print */
+    h1 { font-size: 2rem !important; }
+    p, li { font-size: 1rem !important; }
+
+    /* --- SPECIFIC FIXES --- */
+
+    /* Slide 3: Screenshot Overflow */
+    .screenshot-panel {
+        height: auto !important;
+        display: block !important;
+        text-align: center;
+        page-break-inside: avoid;
+    }
+    .screenshot-img {
+        max-width: 100% !important;
+        max-height: 50vh !important; /* Limita la altura para evitar desbordamiento */
+        height: auto !important;
+        display: block;
+        margin: 0 auto;
+        border: 1px solid #333 !important;
+    }
+
+    /* Slide 4: Tech List Overflow */
+    .tech-list {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    .tech-list li {
+        page-break-inside: avoid !important;
+        margin-bottom: 10px !important;
+        padding: 10px !important;
+    }
+
+    /* Code Panels */
+    .code-panel {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        border: 1px solid #333 !important;
+        display: block !important;
+    }
+    
+    .code-header {
+        position: relative !important;
+        border-bottom: 1px solid #333;
+    }
+
+    pre {
+        white-space: pre-wrap !important; /* Allow wrapping */
+        word-wrap: break-word !important; 
+        overflow: visible !important;
+        font-size: 9pt !important; /* Reduce font size to fit more code */
+        height: auto !important;
+        padding: 15px !important;
+    }
+
+    /* Hide UI */
+    .controls,
+    .nav-btn,
+    .slide-counter,
+    .menu-toggle,
     .slide-nav-menu {
         display: none !important;
     }
