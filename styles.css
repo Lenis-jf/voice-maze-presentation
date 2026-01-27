@@ -592,6 +592,10 @@ pre::-webkit-scrollbar-corner {
     }
 }
 
+.print-only-link {
+    display: none;
+}
+
 /* --- AJUSTES PARA EXPORTAR A PDF (CORREGIDO) --- */
 @media print {
     html,
@@ -720,6 +724,21 @@ pre::-webkit-scrollbar-corner {
     .slide-counter,
     .menu-toggle,
     .slide-nav-menu {
+        display: none !important;
+    }
+
+    .print-only-link {
+        display: block !important;
+        margin-top: 1rem;
+        font-size: 1rem;
+    }
+    
+    .print-only-link a {
+        color: var(--accent) !important;
+        text-decoration: underline;
+    }
+
+    .btn-secondary {
         display: none !important;
     }
 }
